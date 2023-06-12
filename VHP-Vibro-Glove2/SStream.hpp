@@ -71,17 +71,53 @@ private:
     const uint16_t samples_per_frame_;
     
     //private functions
+    /**
+     * @return Total number of unique active channels
+     */
     uint16_t channels_() const { return chan8_ ? 8 : 4; }
-    uint16_t samples_per_cycle_() const { return samplerate_ * cycleperiod_ / 1000; }
-    uint16_t cycle_is_pauzed_() const { return cycle_counter_ >= pauzecycleperiod_ - pauzedcycles_; }
-    
-    uint16_t active_channel_number_(uint16_t sample) const { return sample / ( samples_per_cycle_() / channels_()); }
-    uint16_t active_channel_(uint16_t sample) const { return channel_order_[active_channel_number_(sample)]; }
-    bool channel_is_active_(uint16_t sample, uint16_t channel) const { return channel == active_channel_(sample); }
-    bool channel_is_playing_(uint16_t sample, uint16_t channel) const {
-	return channel_is_active_(sample, channel) &&
-	    sample - active_channel_number_(sample) * samples_per_cycle_() / channels_() < stimduration_ * samplerate_ / 1000; }
 
+    /**
+     * @return Number of samples in a single cycle
+     */
+    uint16_t samples_per_cycle_() const { return samplerate_ * cycleperiod_ / 1000; }
+
+    /**
+     * @return true if the current cycle is pauzed
+     */
+    bool cycle_is_pauzed_() const { return cycle_counter_ >= pauzecycleperiod_ - pauzedcycles_; }
+
+    /**
+     * @input sample - queried sample number
+     * @return active channel number for queried sample, thus 0 1 2 ... channels within cycle
+     */
+    uint16_t active_channel_number_(uint16_t sample) const { return sample / ( samples_per_cycle_() / channels_()); }
+
+    /**
+     * @input  sample - queried sample number
+     * @return active channel for queried sample, thus randomized channels within cycle
+     */
+    uint16_t active_channel_(uint16_t sample) const { return channel_order_[active_channel_number_(sample)]; }
+
+    /**
+     * @input sample - queried sample number
+     * @input channel - queried channel number
+     * @returns true if the queried channel is active for the queried
+     * sample. Note that an active channel can produce silence when
+     * stimduration has already passed.
+     */
+    bool channel_is_active_(uint16_t sample, uint16_t channel) const { return channel == active_channel_(sample); }
+
+
+    /**
+     * @input sample - queried sample number
+     * @input channel - queried channel number
+     * @returns true if the queried channel is playing for the queried
+     * sample. Thus true if stimduration is still ongoing.
+     */
+    bool channel_is_playing_(uint16_t sample, uint16_t channel) const {
+	return channel_is_active_(sample, channel)
+	    && sample - active_channel_number_(sample) * samples_per_cycle_() / channels_()
+	               < stimduration_ * samplerate_ / 1000; }
     
 public:
     /**
@@ -102,6 +138,16 @@ public:
 	}
     }
 	
+
+
+    /**
+     * chan_samples() - stores the value for samples_per_frame_
+     * samples in the designated buffer. 
+     *
+     * @param chan - queried channel
+     * @param *frame - array pointer to store the samples_per_frame_
+     * values in
+     */
     
     void chan_samples(uint16_t chan,  uint16_t* frame) {
 	if(cycle_is_pauzed_()) {
@@ -122,6 +168,12 @@ public:
 
 private:
 
+    /**
+     * chan_sample() - returns the sample value for the queried sample
+     *
+     * @param sample - queried sample
+     */
+    
     uint16_t chan_sample(uint16_t sample) {
 	const uint16_t total_samples_in_stim = sample - active_channel_number_(sample) * samples_per_cycle_() / channels_();
 	const uint16_t stimperiod_in_samples = samplerate_ / stimfreq_;
@@ -156,9 +208,6 @@ private:
 	    channel_order_[i+rj] = tmp;
 	}
     }
-
-
-
 };
 
 #endif
