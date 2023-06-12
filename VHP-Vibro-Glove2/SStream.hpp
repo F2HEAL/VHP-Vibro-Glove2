@@ -146,20 +146,15 @@ public:
      *
      * @param chan - queried channel
      * @param *frame - array pointer to store the samples_per_frame_
-     * values in
+     * values in. !!Asumes that array is already filled with silence!!
      */
     
     void chan_samples(uint16_t chan,  uint16_t* frame) {
-	if(cycle_is_pauzed_()) {
-	    uint16_t silence[8] = {0};
-	    frame = silence;
-	} else {
+	if(!cycle_is_pauzed_()){
 	    for(uint16_t i = 0; i < samples_per_frame_; i++) {
 		const uint16_t sample = frame_counter_ * samples_per_frame_ + i;
 
-		if(!channel_is_playing_(sample, chan)) {
-		    frame[i] = 0;
-		} else {
+		if(channel_is_playing_(sample, chan))  {
 		    frame[i] = chan_sample(frame_counter_ * samples_per_frame_ + i);
 		}
 	    }

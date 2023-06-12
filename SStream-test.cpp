@@ -21,7 +21,7 @@ int main()
     for(uint16_t sample_cycle = 0; sample_cycle < 20000; sample_cycle++) {
 	
 	for(uint8_t chan = 0; chan < 8; chan++) {
-	    uint16_t samples[8];
+	    uint16_t samples[8] = {128, 128, 128, 128,  128, 128, 128, 128 };
 	    stream.chan_samples(chan, samples);
 	    cout << "cycle " << sample_cycle << ", chan " << (int) chan << " : ";
 	    for(uint8_t s=0; s<8; s++)
