@@ -37,6 +37,7 @@ public:
      * @param pauzedcycles - How many cycles within one
      *         pauzecycleperiod are to be silicend
      * @param volume - value for volume
+     * @param test_mode - don't randomize channel order
      * @param jitter - TODO
      */
     explicit SStream(
@@ -47,11 +48,12 @@ public:
 	uint32_t cycleperiod,
 	uint32_t pauzecycleperiod,
 	uint32_t pauzedcycles,
-	uint32_t volume
+	uint32_t volume,
+	bool test_mode = true
 	) : frame_counter_(0), cycle_counter_(0), channel_order_{0}, 
 	    chan8_(chan8), samplerate_(samplerate), stimfreq_(stimfreq), stimduration_(stimduration),
 	    cycleperiod_(cycleperiod), pauzecycleperiod_(pauzecycleperiod), pauzedcycles_(pauzedcycles),
-	    samples_per_frame_(8),
+	    samples_per_frame_(8), test_mode_(test_mode),
 	    sample_cache_(samplerate, stimfreq, volume)
 	{
 	    for(uint32_t i=0; i < 8; i++) 
@@ -72,7 +74,8 @@ private:
     const uint32_t pauzecycleperiod_;
     const uint32_t pauzedcycles_;
     const uint32_t samples_per_frame_;
-
+    const bool test_mode_;
+    
     const SampleCache sample_cache_;
 
 private:
@@ -136,8 +139,9 @@ public:
 
 	if(frame_counter_  > samples_per_cycle_() / samples_per_frame_) {
 	    frame_counter_ = 0;
-	    
-	    shuffle_channel_order();
+
+	    if(!test_mode_)
+		shuffle_channel_order();
 
 	    cycle_counter_++;
 	    if(cycle_counter_ >= pauzecycleperiod_)

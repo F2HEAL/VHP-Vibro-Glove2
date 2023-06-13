@@ -24,7 +24,8 @@ void setup() {
 	888*10,     //cycleperiod
 	5,       //pauzecycleperiod,
 	2,       //pauzedcycles
-	64);     //volume
+	64,      //volume
+	true);   //test_mode
 
 
     SleeveTactors.OnSequenceEnd(OnPwmSequenceEnd);
