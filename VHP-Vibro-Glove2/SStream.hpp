@@ -116,7 +116,7 @@ private:
      */
     bool channel_is_playing_(uint16_t sample, uint16_t channel) const {
 	return channel_is_active_(sample, channel)
-	    && sample - active_channel_number_(sample) * samples_per_cycle_() / channels_()
+	    && sample % (samples_per_cycle_() / channels_())
 	               < stimduration_ * samplerate_ / 1000; }
     
 public:
@@ -170,15 +170,16 @@ private:
      */
     
     uint16_t chan_sample(uint16_t sample) {
-	const uint16_t total_samples_in_stim = sample - active_channel_number_(sample) * samples_per_cycle_() / channels_();
+	const uint16_t total_samples_of_stim_cycle = sample % (samples_per_cycle_() / channels_());
+	
 	const uint16_t stimperiod_in_samples = samplerate_ / stimfreq_;
 
-	const uint16_t samples_in_stim = total_samples_in_stim - (total_samples_in_stim / stimperiod_in_samples) * stimperiod_in_samples;
+	const uint16_t samples_of_cycle = total_samples_of_stim_cycle % stimperiod_in_samples;
 	
 	const float pi2 = 2 * 3.141592;
 
-	const float val = sin ( pi2 * samples_in_stim / stimperiod_in_samples);
-
+	const float val = sin ( pi2 * samples_of_cycle / stimperiod_in_samples);
+	
 	return 128 + 128 * val;
     }
     

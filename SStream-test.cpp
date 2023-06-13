@@ -8,9 +8,12 @@ using namespace std;
 
 int main() 
 {
+    const int samplerate = 2000;
+    
+    
     SStream stream(
 	true,    //chan8
-	20000,   //samplerate
+	samplerate,   //samplerate
 	250,     //stimfreq
 	100,     //stimduration
 	1000,     //cycleperiod
@@ -18,12 +21,15 @@ int main()
 	2);      //pauzedcycles
 	
 
-    for(uint16_t sample_cycle = 0; sample_cycle < 20000; sample_cycle++) {
+    for(uint16_t sample_frame = 0; sample_frame < 20000; sample_frame++) {
 	
 	for(uint8_t chan = 0; chan < 8; chan++) {
-	    uint16_t samples[8] = {128, 128, 128, 128,  128, 128, 128, 128 };
+	    //uint16_t samples[8] = {128, 128, 128, 128,  128, 128,
+	    //128, 128 };
+	    uint16_t samples[8] = {0};
 	    stream.chan_samples(chan, samples);
-	    cout << "cycle " << sample_cycle << ", chan " << (int) chan << " : ";
+	    cout << 1000 * sample_frame * 8 / samplerate << "ms "
+		 << "cycle " << sample_frame << ", chan " << (int) chan << " : ";
 	    for(uint8_t s=0; s<8; s++)
 	     	cout << samples[s] << "-";
 	    cout << endl;
