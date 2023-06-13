@@ -20,8 +20,8 @@ void setup() {
 	true,    //chan8
 	46875,   //samplerate 
 	250,     //stimfreq
-	100,     //stimduration
-	888,     //cycleperiod
+	100*10,     //stimduration
+	888*10,     //cycleperiod
 	5,       //pauzecycleperiod,
 	2,       //pauzedcycles
 	64);     //volume
@@ -44,7 +44,7 @@ void setup() {
 void OnPwmSequenceEnd() {
     p->next_sample_frame();
 
-    for(uint16_t i = 0; i < 8; i++) 
+    for(uint32_t i = 0; i < 8; i++) 
 	SleeveTactors.UpdateChannel(order_pairs[i], p->chan_samples(i));
     
 }
