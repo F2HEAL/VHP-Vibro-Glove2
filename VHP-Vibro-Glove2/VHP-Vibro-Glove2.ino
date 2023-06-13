@@ -21,10 +21,10 @@ void setup() {
 	46875,    //samplerate 
 	250,      //stimfreq
 	100,      //stimduration
-	1666,     //cycleperiod
+	1332,     //cycleperiod
 	5,        //pauzecycleperiod,
 	2,        //pauzedcycles
-	250,      //jitter
+	235,      //jitter
 	64,       //volume
 	false);   //test_mode
 
