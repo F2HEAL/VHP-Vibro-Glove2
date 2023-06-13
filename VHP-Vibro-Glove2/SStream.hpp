@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-#include <math.h>
+#include "SampleCache.hpp"
 
 #ifndef SSTREAM_HPP_
 #define SSTREAM_HPP_
@@ -36,6 +36,7 @@ public:
      *         pauze-cycle
      * @param pauzedcycles - How many cycles within one
      *         pauzecycleperiod are to be silicend
+     * @param volume - value for volume
      * @param jitter - TODO
      */
     explicit SStream(
@@ -45,11 +46,13 @@ public:
 	uint16_t stimduration,
 	uint16_t cycleperiod,
 	uint16_t pauzecycleperiod,
-	uint16_t pauzedcycles
+	uint16_t pauzedcycles,
+	uint16_t volume
 	) : frame_counter_(0), cycle_counter_(0), channel_order_{0}, 
 	    chan8_(chan8), samplerate_(samplerate), stimfreq_(stimfreq), stimduration_(stimduration),
 	    cycleperiod_(cycleperiod), pauzecycleperiod_(pauzecycleperiod), pauzedcycles_(pauzedcycles),
-	    samples_per_frame_(8)
+	    samples_per_frame_(8),
+	    sample_cache_(samplerate, stimfreq, volume)
 	{
 	    for(uint16_t i=0; i < 8; i++) 
 		channel_order_[i] = i;
@@ -69,7 +72,11 @@ private:
     const uint16_t pauzecycleperiod_;
     const uint16_t pauzedcycles_;
     const uint16_t samples_per_frame_;
-    
+
+public:
+    const SampleCache sample_cache_;
+
+private:
     //private functions
     /**
      * @return Total number of unique active channels
@@ -81,6 +88,8 @@ private:
      */
     uint16_t samples_per_cycle_() const { return samplerate_ * cycleperiod_ / 1000; }
 
+    uint16_t samples_per_stimperiod_() const { return samplerate_ / stimfreq_; }
+    
     /**
      * @return true if the current cycle is pauzed
      */
@@ -137,51 +146,25 @@ public:
 	    
 	}
     }
-	
-
 
     /**
-     * chan_samples() - stores the value for samples_per_frame_
+     * chan_samples() - produces the value for samples_per_frame_
      * samples in the designated buffer. 
      *
      * @param chan - queried channel
-     * @param *frame - array pointer to store the samples_per_frame_
-     * values in. !!Asumes that array is already filled with silence!!
+     * @return pointer to array holding samples_per_frame_ values
      */
-    
-    void chan_samples(uint16_t chan,  uint16_t* frame) {
-	if(!cycle_is_pauzed_()){
-	    for(uint16_t i = 0; i < samples_per_frame_; i++) {
-		const uint16_t sample = frame_counter_ * samples_per_frame_ + i;
 
-		if(channel_is_playing_(sample, chan))  {
-		    frame[i] = chan_sample(frame_counter_ * samples_per_frame_ + i);
-		}
-	    }
-	}
-    };
+    
+    const uint16_t* chan_samples(uint16_t chan) {
+	const uint16_t frame_first_sample = frame_counter_ * samples_per_frame_;
+	if(cycle_is_pauzed_() || !channel_is_playing_(frame_first_sample, chan)) 
+	    return sample_cache_.silence_;
+	else
+	    return sample_cache_.cache_ + frame_first_sample % samples_per_stimperiod_();
+    }
 
 private:
-
-    /**
-     * chan_sample() - returns the sample value for the queried sample
-     *
-     * @param sample - queried sample
-     */
-    
-    uint16_t chan_sample(uint16_t sample) {
-	const uint16_t total_samples_of_stim_cycle = sample % (samples_per_cycle_() / channels_());
-	
-	const uint16_t stimperiod_in_samples = samplerate_ / stimfreq_;
-
-	const uint16_t samples_of_cycle = total_samples_of_stim_cycle % stimperiod_in_samples;
-	
-	const float pi2 = 2 * 3.141592;
-
-	const float val = sin ( pi2 * samples_of_cycle / stimperiod_in_samples);
-	
-	return 128 + 128 * val;
-    }
     
     /**    
      * Shuffles the values in channel_order_ in such a way that the value

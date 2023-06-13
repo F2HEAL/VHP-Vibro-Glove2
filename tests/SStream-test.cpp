@@ -12,22 +12,20 @@ int main()
     
     
     SStream stream(
-	true,    //chan8
-	samplerate,   //samplerate
-	250,     //stimfreq
-	100,     //stimduration
-	1000,     //cycleperiod
-	5,       //pauzecycleperiod,
-	2);      //pauzedcycles
-	
+		true,    //chan8
+		samplerate,   //samplerate
+		250,      //stimfreq
+		100,      //stimduration
+		1000,     //cycleperiod
+		5,        //pauzecycleperiod,
+		2,        //pauzedcycles
+		64);
 
     for(uint16_t sample_frame = 0; sample_frame < 20000; sample_frame++) {
 	
 	for(uint8_t chan = 0; chan < 8; chan++) {
-	    //uint16_t samples[8] = {128, 128, 128, 128,  128, 128,
-	    //128, 128 };
-	    uint16_t samples[8] = {0};
-	    stream.chan_samples(chan, samples);
+	    const uint16_t* samples = stream.chan_samples(chan);
+	    
 	    cout << 1000 * sample_frame * 8 / samplerate << "ms "
 		 << "cycle " << sample_frame << ", chan " << (int) chan << " : ";
 	    for(uint8_t s=0; s<8; s++)

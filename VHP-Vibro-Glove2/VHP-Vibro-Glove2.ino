@@ -18,18 +18,19 @@ SStream *p;
 void setup() {
     p = new     SStream(
 	true,    //chan8
-	3906,    //samplerate = 8Mhz / (512 * UpsamplingFactor(4)) 
+	46875,   //samplerate 
 	250,     //stimfreq
 	100,     //stimduration
 	888,     //cycleperiod
 	5,       //pauzecycleperiod,
-	2);      //pauzedcycles
+	2,       //pauzedcycles
+	64);     //volume
 
 
     SleeveTactors.OnSequenceEnd(OnPwmSequenceEnd);
     SleeveTactors.Initialize();
 
-    SleeveTactors.SetUpsamplingFactor(4);
+    SleeveTactors.SetUpsamplingFactor(1);
 
     // Warning: issue only in Arduino. When using StartPlayback() it crashes.
     // Looks like NRF_PWM0 module is automatically triggered, and triggering it
@@ -43,11 +44,9 @@ void setup() {
 void OnPwmSequenceEnd() {
     p->next_sample_frame();
 
-    for(uint16_t i = 0; i < 8; i++) {
-	uint16_t samples[8] = {128, 128, 128, 128,  128, 128, 128, 128 };
-	p->chan_samples(i, samples);
-	SleeveTactors.UpdateChannel(order_pairs[i], samples);
-    }
+    for(uint16_t i = 0; i < 8; i++) 
+	SleeveTactors.UpdateChannel(order_pairs[i], p->chan_samples(i));
+    
 }
 
 void loop() {
