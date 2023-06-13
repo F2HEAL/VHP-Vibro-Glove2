@@ -17,15 +17,16 @@ SStream *p;
 
 void setup() {
     p = new     SStream(
-	true,    //chan8
-	46875,   //samplerate 
-	250,     //stimfreq
-	100*10,     //stimduration
-	888*10,     //cycleperiod
-	5,       //pauzecycleperiod,
-	2,       //pauzedcycles
-	64,      //volume
-	true);   //test_mode
+	true,     //chan8
+	46875,    //samplerate 
+	250,      //stimfreq
+	100,      //stimduration
+	1666,     //cycleperiod
+	5,        //pauzecycleperiod,
+	2,        //pauzedcycles
+	250,      //jitter
+	64,       //volume
+	false);   //test_mode
 
 
     SleeveTactors.OnSequenceEnd(OnPwmSequenceEnd);

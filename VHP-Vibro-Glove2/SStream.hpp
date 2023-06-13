@@ -36,9 +36,10 @@ public:
      *         pauze-cycle
      * @param pauzedcycles - How many cycles within one
      *         pauzecycleperiod are to be silicend
+     * @param jitter - Jitter in promile of cycleperiod / channels
+     *        (0...1000), see calc_channel_jitter_()
      * @param volume - value for volume
      * @param test_mode - don't randomize channel order
-     * @param jitter - TODO
      */
     explicit SStream(
 	bool chan8,
@@ -48,22 +49,36 @@ public:
 	uint32_t cycleperiod,
 	uint32_t pauzecycleperiod,
 	uint32_t pauzedcycles,
+	uint16_t jitter,
 	uint32_t volume,
 	bool test_mode = true
-	) : frame_counter_(0), cycle_counter_(0), channel_order_{0}, 
+	) : frame_counter_(0), cycle_counter_(0), channel_order_{0}, channel_jitter_{0},
 	    chan8_(chan8), samplerate_(samplerate), stimfreq_(stimfreq), stimduration_(stimduration),
 	    cycleperiod_(cycleperiod), pauzecycleperiod_(pauzecycleperiod), pauzedcycles_(pauzedcycles),
+	    max_jitter_(jitter * cycleperiod_ / channels_() / 1000),
 	    samples_per_frame_(8), test_mode_(test_mode),
 	    sample_cache_(samplerate, stimfreq, volume)
 	{
-	    for(uint32_t i=0; i < 8; i++) 
+	    randomSeed(micros());
+	    
+	    for(uint16_t i=0; i < 8; i++) 
 		channel_order_[i] = i;
+
+	    if(!test_mode_)
+		shuffle_channel_order_();
+	    
+	    
+	    if(max_jitter_ > 0)
+		calc_channel_jitter_();
+	    
 	}
 private:
     // internal state
     uint32_t frame_counter_;
     uint32_t cycle_counter_;
     uint32_t channel_order_[8];
+    int32_t channel_jitter_[8];
+    
     
     // set by constructor
     const bool chan8_;
@@ -73,6 +88,7 @@ private:
     const uint32_t cycleperiod_;
     const uint32_t pauzecycleperiod_;
     const uint32_t pauzedcycles_;
+    const uint32_t max_jitter_;
     const uint32_t samples_per_frame_;
     const bool test_mode_;
     
@@ -128,7 +144,7 @@ private:
     bool channel_is_playing_(uint32_t sample, uint32_t channel) const {
 	return channel_is_active_(sample, channel)
 	    && sample % (samples_per_cycle_() / channels_())
-	               < stimduration_ * samplerate_ / 1000; }
+	                < stimduration_ * samplerate_ / 1000; }
     
 public:
     /**
@@ -141,7 +157,10 @@ public:
 	    frame_counter_ = 0;
 
 	    if(!test_mode_)
-		shuffle_channel_order();
+		shuffle_channel_order_();
+
+	    if(max_jitter_ > 0)
+		calc_channel_jitter_();
 
 	    cycle_counter_++;
 	    if(cycle_counter_ >= pauzecycleperiod_)
@@ -160,8 +179,8 @@ public:
 
     
     const uint16_t* chan_samples(uint32_t chan) {
-	const uint32_t frame_first_sample = frame_counter_ * samples_per_frame_;
-	if(cycle_is_pauzed_() || !channel_is_playing_(frame_first_sample, chan)) 
+	const int32_t frame_first_sample = (int32_t) frame_counter_ * samples_per_frame_ - channel_jitter_[chan];
+	if(frame_first_sample < 0 || cycle_is_pauzed_() || !channel_is_playing_(frame_first_sample, chan)) 
 	    return sample_cache_.silence_;
 	else
 	    return sample_cache_.cache_ + frame_first_sample % samples_per_stimperiod_();
@@ -174,15 +193,13 @@ private:
      * of the last element differs from the first (to avoid activating the
      * same channel consecutively)
      */    
-    void shuffle_channel_order() {
-	randomSeed(micros());
-    
+    void shuffle_channel_order_() {
 	int rj = random(channels_() - 1);
 	uint32_t tmp = channel_order_[rj];
 	channel_order_[rj] = channel_order_[0];
 	channel_order_[0] = tmp;
     
-	for(uint32_t i=1; i<channels_() - 1; i++) {
+	for(uint16_t i=1; i<channels_() - 1; i++) {
 	    rj = random(channels_() - i);
 	    uint32_t tmp = channel_order_[i];
 
@@ -190,6 +207,27 @@ private:
 	    channel_order_[i+rj] = tmp;
 	}
     }
+
+
+    /**
+     * recalculate Jitter value for each channel
+     *
+     * In the protocol J is % of 1/8th of cycleperiod so that every
+     * start is delayed over ] s0 - J * cycleperiod / 8 , s0 + J
+     * cycleperiod / 8 [ (from a uniform distribution)
+     *
+     * This is equivalent to delaying each input with
+     * random(cycleperiod/4)
+     *
+     * As we support 8 channels, we make this
+     * random(cycleperiod / channels)
+     */
+    
+    void calc_channel_jitter_() {
+	for(uint16_t i=0; i<channels_(); i++)  
+	    channel_jitter_[i] = random(max_jitter_);
+    }
+	
 };
 
 #endif

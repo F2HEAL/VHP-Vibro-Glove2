@@ -16,11 +16,12 @@ int main()
 		samplerate,   //samplerate
 		250,      //stimfreq
 		100,      //stimduration
-		1000,     //cycleperiod
+		8000,     //cycleperiod
 		5,        //pauzecycleperiod,
 		2,        //pauzedcycles
+		250,       //jitter
 		64,       //volume
-		true);    //test_mode
+		false);    //test_mode
 
     for(uint16_t sample_frame = 0; sample_frame < 20000; sample_frame++) {
 	
