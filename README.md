@@ -2,6 +2,9 @@
 
 Open Source design for Vibrotactile Coordinated Reset (vCR) Gloves.
 
+![image](https://github.com/F2HEAL/VHP-Vibro-Glove2/assets/18469570/6d37423f-a8d8-489d-8761-dce0398e5a9a)
+
+
 ## Hardware 
 
 This software was tested on the hardware developed in the excellent [Audio-to-tactile](https://github.com/google/audio-to-tactile) project. 
