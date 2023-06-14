@@ -1,6 +1,6 @@
 # VHP-Vibro-Glove2
 
-This is a driver for a home-brew attempt at a [vibrating glove](https://stanmed.stanford.edu/vibrating-glove-reorganize-neurons-parkinsons/).
+Open Source design for Vibrotactile Coordinated Reset (vCR) Gloves.
 
 ## Hardware 
 
