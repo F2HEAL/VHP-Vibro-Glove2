@@ -179,10 +179,10 @@ public:
 
     
     const uint16_t* chan_samples(uint32_t chan) {
-	const int32_t frame_first_sample = (int32_t) frame_counter_ * samples_per_frame_ - channel_jitter_[chan];
-	if(frame_first_sample < 0 || cycle_is_pauzed_() || !channel_is_playing_(frame_first_sample, chan)) 
+	const int32_t frame_first_sample = frame_counter_ * samples_per_frame_ - channel_jitter_[chan % channels_()];
+	if(frame_first_sample < 0 || cycle_is_pauzed_() || !channel_is_playing_(frame_first_sample, chan % channels_())) 
 	    return sample_cache_.silence_;
-	else
+	else 
 	    return sample_cache_.cache_ + frame_first_sample % samples_per_stimperiod_();
     }
 
