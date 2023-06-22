@@ -16,18 +16,33 @@ uint16_t order_pairs[8] = {4, 5, 6, 7, 8, 9, 10, 11};
 SStream *p;
 
 void setup() {
+    //8 channel mode
     p = new     SStream(
-	true,     //chan8
-	46875,    //samplerate 
-	250,      //stimfreq
-	100,      //stimduration
-	1332,     //cycleperiod
-	5,        //pauzecycleperiod,
-	2,        //pauzedcycles
-	235,      //jitter
-	64,       //volume
-	false);   //test_mode
+	    true,     //chan8
+    	46875,    //samplerate 
+	    250,      //stimfreq
+	    100,      //stimduration
+	    1332,     //cycleperiod
+	    5,        //pauzecycleperiod,
+	    2,        //pauzedcycles
+	    235,      //jitter
+	    64,       //volume
+	    false);   //test_mode
 
+    //4 channel mode.
+    /*
+    p = new     SStream(
+	    false,    //chan8
+	    46875,    //samplerate 
+	    250,      //stimfreq
+	    100,      //stimduration
+	    666,      //cycleperiod
+	    5,        //pauzecycleperiod,
+	    2,        //pauzedcycles
+	    235,      //jitter
+	    64,       //volume
+	    false);   //test_mode
+    */
 
     SleeveTactors.OnSequenceEnd(OnPwmSequenceEnd);
     SleeveTactors.Initialize();
