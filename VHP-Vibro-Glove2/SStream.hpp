@@ -12,7 +12,7 @@
  * constructor
  *
  * As this class is contructed for usage with Adafruit Feather nRF52
- * PWM driver, sample_cycles are used. In a sample_frame, 8 samples
+ * PWM driver, sample_frames are used. In a sample_frame, 8 samples
  * have been consumed by the hardware.
  *
  * next_sample_frame() indicates that a cycle has passed
