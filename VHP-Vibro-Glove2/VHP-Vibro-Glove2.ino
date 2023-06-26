@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 #include "pwm_sleeve.h"
 #include "board_defs.h"
 

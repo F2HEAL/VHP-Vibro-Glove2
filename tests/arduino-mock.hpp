@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 #ifndef ARDUINO_MOCK_
 #define ARDUINO_MOCK_
 
