@@ -27,7 +27,7 @@ int main()
 
     for(uint16_t sample_frame = 0; sample_frame < 20000; sample_frame++) {
 	
-	for(uint8_t chan = 0; chan < 8; chan++) {
+	for(uint8_t chan = 0; chan < stream.channels(); chan++) {
 	    const uint16_t* samples = stream.chan_samples(chan);
 	    
 	    cout << 1000 * sample_frame * 8 / samplerate << "ms "

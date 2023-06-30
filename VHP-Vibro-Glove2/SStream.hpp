@@ -57,7 +57,7 @@ public:
 	) : frame_counter_(0), cycle_counter_(0), channel_order_{0}, channel_jitter_{0},
 	    chan8_(chan8), samplerate_(samplerate), stimfreq_(stimfreq), stimduration_(stimduration),
 	    cycleperiod_(cycleperiod), pauzecycleperiod_(pauzecycleperiod), pauzedcycles_(pauzedcycles),
-	    max_jitter_(jitter * cycleperiod_ / channels_() / 1000),
+	    max_jitter_(jitter * cycleperiod_ / channels() / 1000),
 	    samples_per_frame_(8), test_mode_(test_mode),
 	    sample_cache_(samplerate, stimfreq, volume)
 	{
@@ -97,12 +97,6 @@ private:
     const SampleCache sample_cache_;
 
 private:
-    //private functions
-    /**
-     * @return Total number of unique active channels
-     */
-    uint32_t channels_() const { return chan8_ ? 8 : 4; }
-
     /**
      * @return Number of samples in a single cycle
      */
@@ -119,7 +113,7 @@ private:
      * @input sample - queried sample number
      * @return active channel number for queried sample, thus 0 1 2 ... channels within cycle
      */
-    uint32_t active_channel_number_(uint32_t sample) const { return sample / ( samples_per_cycle_() / channels_()); }
+    uint32_t active_channel_number_(uint32_t sample) const { return sample / ( samples_per_cycle_() / channels()); }
 
     /**
      * @input  sample - queried sample number
@@ -145,10 +139,15 @@ private:
      */
     bool channel_is_playing_(uint32_t sample, uint32_t channel) const {
 	return channel_is_active_(sample, channel)
-	    && sample % (samples_per_cycle_() / channels_())
+	    && sample % (samples_per_cycle_() / channels())
 	                < stimduration_ * samplerate_ / 1000; }
     
 public:
+    /**
+     * @return Total number of unique active channels
+     */
+    uint32_t channels() const { return chan8_ ? 8 : 4; }
+    
     /**
      * Advances internal state to the next sample frame
      */
@@ -181,8 +180,8 @@ public:
 
     
     const uint16_t* chan_samples(uint32_t chan) {
-	const int32_t frame_first_sample = frame_counter_ * samples_per_frame_ - channel_jitter_[chan % channels_()];
-	if(frame_first_sample < 0 || cycle_is_pauzed_() || !channel_is_playing_(frame_first_sample, chan % channels_())) 
+	const int32_t frame_first_sample = frame_counter_ * samples_per_frame_ - channel_jitter_[chan % channels()];
+	if(frame_first_sample < 0 || cycle_is_pauzed_() || !channel_is_playing_(frame_first_sample, chan % channels())) 
 	    return sample_cache_.silence_;
 	else 
 	    return sample_cache_.cache_ + frame_first_sample % samples_per_stimperiod_();
@@ -196,13 +195,13 @@ private:
      * same channel consecutively)
      */    
     void shuffle_channel_order_() {
-	int rj = random(channels_() - 1);
+	int rj = random(channels() - 1);
 	uint32_t tmp = channel_order_[rj];
 	channel_order_[rj] = channel_order_[0];
 	channel_order_[0] = tmp;
     
-	for(uint16_t i=1; i<channels_() - 1; i++) {
-	    rj = random(channels_() - i);
+	for(uint16_t i=1; i<channels() - 1; i++) {
+	    rj = random(channels() - i);
 	    uint32_t tmp = channel_order_[i];
 
 	    channel_order_[i] = channel_order_[i+rj];
@@ -226,7 +225,7 @@ private:
      */
     
     void calc_channel_jitter_() {
-	for(uint16_t i=0; i<channels_(); i++)  
+	for(uint16_t i=0; i<channels(); i++)  
 	    channel_jitter_[i] = random(max_jitter_);
     }
 	

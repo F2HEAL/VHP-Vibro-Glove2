@@ -18,6 +18,8 @@ uint16_t order_pairs[8] = {4, 5, 6, 7, 8, 9, 10, 11};
 SStream *p;
 
 void setup() {
+
+    
     //8 channel mode
     p = new     SStream(
 	    true,     //chan8
@@ -48,7 +50,8 @@ void setup() {
 
     SleeveTactors.OnSequenceEnd(OnPwmSequenceEnd);
     SleeveTactors.Initialize();
-
+    nrf_gpio_pin_set(kLedPinBlue);
+    
     SleeveTactors.SetUpsamplingFactor(1);
 
     // Warning: issue only in Arduino. When using StartPlayback() it crashes.
@@ -57,13 +60,15 @@ void setup() {
     // for NRF_PWM1 and NRF_PWM2. To fix might need a nRF52 driver update.
     nrf_pwm_task_trigger(NRF_PWM1, NRF_PWM_TASK_SEQSTART0);
     nrf_pwm_task_trigger(NRF_PWM2, NRF_PWM_TASK_SEQSTART0);
+
+    nrf_gpio_pin_clear(kLedPinBlue);
 }
 
 
 void OnPwmSequenceEnd() {
     p->next_sample_frame();
 
-    for(uint32_t i = 0; i < 8; i++) 
+    for(uint32_t i = 0; i < p->channels(); i++) 
 	SleeveTactors.UpdateChannel(order_pairs[i], p->chan_samples(i));
     
 }
