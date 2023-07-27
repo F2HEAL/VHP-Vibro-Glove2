@@ -40,7 +40,7 @@ public:
      *         pauzecycleperiod are to be silicend
      * @param jitter - Jitter in promile of cycleperiod / channels
      *        (0...1000), see calc_channel_jitter_()
-     * @param volume - value for volume
+     * @param volume - value for volume, range for valid value is 0..512
      * @param test_mode - don't randomize channel order
      */
     explicit SStream(
