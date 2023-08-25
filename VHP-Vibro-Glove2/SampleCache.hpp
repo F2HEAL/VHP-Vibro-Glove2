@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+#ifndef SAMPLECACHE_HPP_
+#define SAMPLECACHE_HPP_
+
 #include <stdint.h>
 #include <math.h>
 
-#ifndef SAMPLECACHE_HPP_
-#define SAMPLECACHE_HPP_
 
 class SampleCache {
 public:

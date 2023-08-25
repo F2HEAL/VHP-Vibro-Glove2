@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+#include "max14661.h"
 #include "pwm_sleeve.h"
 #include "board_defs.h"
 
 
 #include "SStream.hpp"
+#include "CSense.hpp"
 
 using namespace audio_tactile;
 
@@ -15,27 +17,35 @@ using namespace audio_tactile;
 uint16_t order_pairs[8] = {4, 5, 6, 7, 8, 9, 10, 11}; 
 
 
-SStream *p;
+SStream *sstream;
+CSense *csense;
+
+const uint32_t volume = 264;
+const uint32_t samplerate = 46875;
+
+uint16_t active_channel = 65535;
 
 void setup() {
-
+    nrf_gpio_cfg_output(kLedPinBlue);
+    nrf_gpio_cfg_output(kLedPinGreen);
+    nrf_gpio_pin_set(kLedPinBlue);
     
     //8 channel mode
-    p = new     SStream(
+    sstream = new     SStream(
 	    true,     //chan8
-    	46875,    //samplerate 
+	    samplerate,  //samplerate 
 	    250,      //stimfreq
 	    100,      //stimduration
 	    1332,     //cycleperiod
 	    5,        //pauzecycleperiod,
 	    2,        //pauzedcycles
 	    235,      //jitter
-	    64,       //volume
+	    volume,       //volume
 	    false);   //test_mode
 
     //4 channel mode.
     /*
-    p = new     SStream(
+    sstream = new     SStream(
 	    false,    //chan8
 	    46875,    //samplerate 
 	    250,      //stimfreq
@@ -48,9 +58,17 @@ void setup() {
 	    false);   //test_mode
     */
 
+    csense = new CSense(samplerate,
+			0.0001f, // attack  time const
+			1.5f); //decay time const
+
+    nrf_gpio_cfg_output(kCurrentAmpEnable);
+    EnableCurrentAmp();
+    Multiplexer.Initialize();
+    
     SleeveTactors.OnSequenceEnd(OnPwmSequenceEnd);
     SleeveTactors.Initialize();
-    nrf_gpio_pin_set(kLedPinBlue);
+
     
     SleeveTactors.SetUpsamplingFactor(1);
 
@@ -66,11 +84,37 @@ void setup() {
 
 
 void OnPwmSequenceEnd() {
-    p->next_sample_frame();
+    bool new_cycle_started = sstream->next_sample_frame();
+    if(new_cycle_started) {
+	for(uint32_t i = 0; i < sstream->channels(); i++) {
+	    float peak = csense->get_peak(i);
+	    uint16_t samples = csense->get_samples(i);
 
-    for(uint32_t i = 0; i < p->channels(); i++) 
-	SleeveTactors.UpdateChannel(order_pairs[i], p->chan_samples(i));
-    
+	    Serial.print("[Chan");         Serial.print(i);
+	    Serial.print("] sampes=");   Serial.print(samples);
+	    Serial.print(" peak="); Serial.print(peak);
+	    Serial.println();
+	}
+
+	csense->init_counters();
+    }
+
+    for(uint32_t i = 0; i < sstream->channels(); i++)  {
+	const uint16_t* buf = sstream->chan_samples(i);
+	SleeveTactors.UpdateChannel(order_pairs[i], buf);
+
+	// check if channel is playing non-silence
+	if(buf[0] + buf[1] != 2 * volume) {
+	    if(active_channel != i) {
+		active_channel = i;
+		Multiplexer.ConnectChannel(order_pairs[i]);
+	    }
+
+	    const float adc_value = analogRead(A6);
+
+	    csense->record(i, adc_value);
+	}
+    }
 }
 
 void loop() {
@@ -80,3 +124,5 @@ void loop() {
     __WFE(); // More info about this sequence:
 // devzone.nordicsemi.com/f/nordic-q-a/490/how-do-you-put-the-nrf51822-chip-to-sleep/2571    
 }
+
+void EnableCurrentAmp() { nrf_gpio_pin_write(kCurrentAmpEnable, 0); }

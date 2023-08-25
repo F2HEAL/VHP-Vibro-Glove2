@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-#include <stdint.h>
-
-#include "SampleCache.hpp"
-
 #ifndef SSTREAM_HPP_
 #define SSTREAM_HPP_
+
+#include <stdint.h>
+#include "SampleCache.hpp"
+
 
 /**
  * SStream - class to generate vibration stream on 4 or 8 channels
@@ -17,9 +17,9 @@
  * PWM driver, sample_frames are used. In a sample_frame, 8 samples
  * have been consumed by the hardware.
  *
- * next_sample_frame() indicates that a cycle has passed
- * chan_samples() produces the 8 samples for the given channel in the
- * current cycle
+ * * calling next_sample_frame() indicates that a cycle has passed
+ * * chan_samples() produces the 8 samples for the given channel in the
+ *   current cycle
  */
 
 class SStream {
@@ -150,8 +150,9 @@ public:
     
     /**
      * Advances internal state to the next sample frame
+     * @return true if new cycle was started
      */
-    void next_sample_frame() {
+    bool next_sample_frame() {
 	frame_counter_++;
 
 	if(frame_counter_  > samples_per_cycle_() / samples_per_frame_) {
@@ -166,8 +167,11 @@ public:
 	    cycle_counter_++;
 	    if(cycle_counter_ >= pauzecycleperiod_)
 		cycle_counter_ = 0;
-	    
+
+	    return true;
 	}
+
+	return false;
     }
 
     /**
