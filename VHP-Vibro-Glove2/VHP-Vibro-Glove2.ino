@@ -85,16 +85,17 @@ void OnPwmSequenceEnd() {
     
     bool new_cycle_started = sstream->next_sample_frame();
     if(new_cycle_started) {
-	Serial.println("Channel\tIPeak\tSamples\t");
-	for(uint32_t i = 0; i < sstream->channels(); i++) {
-	    float peak = csense->get_peak(i);
-	    uint16_t samples = csense->get_samples(i);
-
-	    Serial.print(order_pairs[i]-3); Serial.print("\t");
-	    Serial.print(peak);             Serial.print("\t");
-	    Serial.println(samples);
+	if(csense->get_peak(0) > 0) {
+	    Serial.println("Channel\tIPeak\tSamples\t");
+	    for(uint32_t i = 0; i < sstream->channels(); i++) {
+		float peak = csense->get_peak(i);
+		uint16_t samples = csense->get_samples(i);
+		
+		Serial.print(order_pairs[i]-3); Serial.print("\t");
+		Serial.print(peak);             Serial.print("\t");
+		Serial.println(samples);
+	    }
 	}
-
 	csense->init_counters();
     }
 
