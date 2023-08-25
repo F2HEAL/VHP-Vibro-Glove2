@@ -90,9 +90,10 @@ void OnPwmSequenceEnd() {
 	    float peak = csense->get_peak(i);
 	    uint16_t samples = csense->get_samples(i);
 
-	    Serial.print("[Chan");         Serial.print(i);
-	    Serial.print("] sampes=");   Serial.print(samples);
-	    Serial.print(" peak="); Serial.print(peak);
+	    Serial.print("[");              Serial.print(i);
+	    Serial.print("]\tchannel=");    Serial.print(order_pairs[i]-3);
+	    Serial.print("\tIpeak=");     Serial.print(peak);	    
+	    Serial.print("\tsamples=");   Serial.print(samples);
 	    Serial.println();
 	}
 
