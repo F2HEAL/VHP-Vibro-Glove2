@@ -23,8 +23,6 @@ CSense *csense;
 const uint32_t volume = 264;
 const uint32_t samplerate = 46875;
 
-uint16_t active_channel = 65535;
-
 void setup() {
     nrf_gpio_cfg_output(kLedPinBlue);
     nrf_gpio_cfg_output(kLedPinGreen);
@@ -68,7 +66,6 @@ void setup() {
     
     SleeveTactors.OnSequenceEnd(OnPwmSequenceEnd);
     SleeveTactors.Initialize();
-
     
     SleeveTactors.SetUpsamplingFactor(1);
 
@@ -84,17 +81,18 @@ void setup() {
 
 
 void OnPwmSequenceEnd() {
+    static uint16_t active_channel = 65535;
+    
     bool new_cycle_started = sstream->next_sample_frame();
     if(new_cycle_started) {
+	Serial.println("Channel\tIPeak\tSamples\t");
 	for(uint32_t i = 0; i < sstream->channels(); i++) {
 	    float peak = csense->get_peak(i);
 	    uint16_t samples = csense->get_samples(i);
 
-	    Serial.print("[");              Serial.print(i);
-	    Serial.print("]\tchannel=");    Serial.print(order_pairs[i]-3);
-	    Serial.print("\tIpeak=");     Serial.print(peak);	    
-	    Serial.print("\tsamples=");   Serial.print(samples);
-	    Serial.println();
+	    Serial.print(order_pairs[i]-3); Serial.print("\t");
+	    Serial.print(peak);             Serial.print("\t");
+	    Serial.println(samples);
 	}
 
 	csense->init_counters();
