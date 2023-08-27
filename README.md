@@ -2,8 +2,6 @@
 
 Open Source design for Vibrotactile Coordinated Reset (vCR) Gloves.
 
-**NOTE:** This code is NOT READY. This is the current sensing development branch, only use for testing.  
-
 ## Hardware 
 
 This software was tested on the Adafruit Feather nRF52840 board developed in the excellent [Audio-to-tactile](https://github.com/google/audio-to-tactile) project. As tactile device actuators in a custom build housing were used.
