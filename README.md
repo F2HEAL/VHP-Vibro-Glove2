@@ -2,6 +2,7 @@
 
 Open Source design for Vibrotactile Coordinated Reset (vCR) Gloves.
 
+**NOTE:** This a development branch, only use for testing.
 
 ## Hardware 
 
