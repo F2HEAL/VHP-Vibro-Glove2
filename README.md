@@ -12,6 +12,8 @@ We used the board developed in the [Google Audio-to-tactile](https://github.com/
 
 We used 8 [TECTONIC TEAX09C005-8 Audio Exciters](https://www.tectonicaudiolabs.com/product/teax09c005-8/) in a 3D printed housing. Latest version [Gen13.stl](doc/Gen13.stl) with instructions on assembly [here](https://bb.f2heal.com/viewtopic.php?p=11#p11).
 
+![image](https://github.com/F2HEAL/VHP-Vibro-Glove2/assets/18469570/78e032f1-99f6-40ed-86ab-5e5dde163579)
+
 ![image](https://github.com/F2HEAL/VHP-Vibro-Glove2/assets/18469570/6d37423f-a8d8-489d-8761-dce0398e5a9a)
 
 ## Software
