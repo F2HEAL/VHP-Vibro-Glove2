@@ -4,7 +4,9 @@ Open Source design for Vibrotactile Coordinated Reset (vCR) Gloves.
 
 ## Hardware 
 
-This software was tested on the Adafruit Feather nRF52840 board developed in the excellent [Audio-to-tactile](https://github.com/google/audio-to-tactile) project. As tactile device actuators in a custom build housing were used.
+We used the board developed in the [Google Audio-to-tactile](https://github.com/google/audio-to-tactile) project (Thanks!). Instructions on how to obtain this board are provided [here](https://github.com/google/audio-to-tactile/blob/main/extras/doc/hardware/index.md).
+
+We used 8 [TECTONIC TEAX09C005-8 Audio Exciters](https://www.tectonicaudiolabs.com/product/teax09c005-8/) in a 3D printed housing. Latest version [Gen13.stl](doc/Gen13.stl) with instructions on assembly [here](https://bb.f2heal.com/viewtopic.php?p=11#p11).
 
 ![image](https://github.com/F2HEAL/VHP-Vibro-Glove2/assets/18469570/6d37423f-a8d8-489d-8761-dce0398e5a9a)
 
