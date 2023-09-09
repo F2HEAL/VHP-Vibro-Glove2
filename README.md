@@ -2,6 +2,10 @@
 
 Open Source design for Vibrotactile Coordinated Reset (vCR) Gloves.
 
+## Disclaimer
+
+This product is not a medical device and is not intended to diagnose, treat, cure, or prevent any disease or medical condition. It should not be used as a substitute for professional medical advice, diagnosis, or treatment. Always consult with a qualified healthcare professional before making any decisions related to your health or using this product in conjunction with a medical treatment plan.
+
 ## Hardware 
 
 We used the board developed in the [Google Audio-to-tactile](https://github.com/google/audio-to-tactile) project (Thanks!). Instructions on how to obtain this board are provided [here](https://github.com/google/audio-to-tactile/blob/main/extras/doc/hardware/index.md).
