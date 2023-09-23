@@ -82,8 +82,10 @@ void setup() {
 
 void OnPwmSequenceEnd() {
     static uint16_t active_channel = 65535;
+
     
     bool new_cycle_started = sstream->next_sample_frame();
+    // print csense data and reinit when new cycle starts
     if(new_cycle_started) {
 	if(csense->get_peak(0) > 0) {
 	    Serial.println("Channel\tIPeak\tSamples\t");
@@ -98,22 +100,29 @@ void OnPwmSequenceEnd() {
 	}
 	csense->init_counters();
     }
-
+    
+    
     for(uint32_t i = 0; i < sstream->channels(); i++)  {
-	const uint16_t* buf = sstream->chan_samples(i);
-	SleeveTactors.UpdateChannel(order_pairs[i], buf);
 
-	// check if channel is playing non-silence
-	if(buf[0] + buf[1] != 2 * volume) {
-	    if(active_channel != i) {
-		active_channel = i;
-		Multiplexer.ConnectChannel(order_pairs[i]);
-	    }
+      // play silence or sample for channel i
+      const uint16_t* buf = sstream->chan_samples(i);
+      SleeveTactors.UpdateChannel(order_pairs[i], buf);
 
-	    const float adc_value = analogRead(A6);
+      
+      // check if this channel i is playing something non-silence?
+      // this will only be valid for one channel i
+      if(buf[0] + buf[1] != 2 * volume) {
 
-	    csense->record(i, adc_value);
+	// has the active channel changed?
+	if(active_channel != i) {
+	  active_channel = i;
+	  Multiplexer.ConnectChannel(order_pairs[i]);
 	}
+
+	// record the reading for this channel
+	const float adc_value = analogRead(A6);
+	csense->record(i, adc_value);
+      }
     }
 }
 
