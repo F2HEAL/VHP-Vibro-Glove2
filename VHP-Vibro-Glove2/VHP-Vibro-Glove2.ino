@@ -23,14 +23,14 @@ void setup() {
     //8 channel mode
     p = new     SStream(
 	    true,     //chan8
-    	46875,    //samplerate 
+    	    46875,    //samplerate 
 	    250,      //stimfreq
 	    100,      //stimduration
 	    1332,     //cycleperiod
 	    5,        //pauzecycleperiod,
 	    2,        //pauzedcycles
 	    235,      //jitter
-	    64,       //volume
+	    278,      //volume
 	    false);   //test_mode
 
     //4 channel mode.
