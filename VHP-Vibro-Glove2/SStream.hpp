@@ -218,7 +218,7 @@ private:
      * cycleperiod / 8 [ (from a uniform distribution)
      *
      * This is equivalent to delaying each input with
-     * random(cycleperiod/4)
+     * random(cycleperiod/4) * Jitter / 1000
      *
      * As we support 8 channels, we make this
      * random(cycleperiod / channels)
