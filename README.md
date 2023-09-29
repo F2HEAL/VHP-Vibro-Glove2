@@ -2,6 +2,8 @@
 
 Open Source design for Vibrotactile Coordinated Reset (vCR) Gloves.
 
+https://youtu.be/0L4k3rwZa5U
+
 ## Disclaimer
 
 This product is not a medical device and is not intended to diagnose, treat, cure, or prevent any disease or medical condition. It should not be used as a substitute for professional medical advice, diagnosis, or treatment. Always consult with a qualified healthcare professional before making any decisions related to your health or using this product in conjunction with a medical treatment plan.
