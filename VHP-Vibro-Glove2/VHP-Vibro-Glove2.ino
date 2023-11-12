@@ -2,7 +2,7 @@
 
 #include "pwm_sleeve.h"
 #include "board_defs.h"
-
+#include "battery_monitor.h"
 
 #include "SStream.hpp"
 
@@ -13,7 +13,6 @@ using namespace audio_tactile;
 
 // Output sequence for Godef Hardware
 uint16_t order_pairs[8] = {4, 5, 6, 7, 8, 9, 10, 11}; 
-
 
 SStream *p;
 
@@ -62,6 +61,11 @@ void setup() {
     nrf_pwm_task_trigger(NRF_PWM2, NRF_PWM_TASK_SEQSTART0);
 
     nrf_gpio_pin_clear(kLedPinBlue);
+
+
+    pinMode(27, OUTPUT);  // P.019 LED
+    PuckBatteryMonitor.InitializeLowVoltageInterrupt();
+    PuckBatteryMonitor.OnLowBatteryEventListener(low_battery_warning);
 }
 
 
@@ -74,9 +78,17 @@ void OnPwmSequenceEnd() {
 }
 
 void loop() {
-    // Sleep
-    __WFE(); // Enter System ON sleep mode (OFF mode would stop timers)
-    __SEV(); // Make sure any pending events are cleared
-    __WFE(); // More info about this sequence:
-// devzone.nordicsemi.com/f/nordic-q-a/490/how-do-you-put-the-nrf51822-chip-to-sleep/2571    
+  uint16_t battery = PuckBatteryMonitor.MeasureBatteryVoltage();
+  float converted = PuckBatteryMonitor.ConvertBatteryVoltageToFloat(battery);
+  Serial.println(converted);
+  delay(120000);
 }
+
+void low_battery_warning() {
+  digitalToggle(27);  // Toggle the led.
+  Serial.print("Low voltage trigger: ");
+  Serial.println(PuckBatteryMonitor.GetEvent());
+  // "0" event means that battery voltage is below reference voltage (3.5V)
+  // "1" event means above.
+}
+
