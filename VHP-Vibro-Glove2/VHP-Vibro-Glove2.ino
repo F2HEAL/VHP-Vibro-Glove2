@@ -17,7 +17,7 @@ uint16_t order_pairs[8] = {4, 5, 6, 7, 8, 9, 10, 11};
 SStream *p;
 
 void setup() {
-
+  nrf_gpio_cfg_output(kLedPinBlue);
     
     //8 channel mode
     p = new     SStream(
@@ -62,8 +62,6 @@ void setup() {
 
     nrf_gpio_pin_clear(kLedPinBlue);
 
-
-    pinMode(27, OUTPUT);  // P.019 LED
     PuckBatteryMonitor.InitializeLowVoltageInterrupt();
     PuckBatteryMonitor.OnLowBatteryEventListener(low_battery_warning);
 }
@@ -80,12 +78,13 @@ void OnPwmSequenceEnd() {
 void loop() {
   uint16_t battery = PuckBatteryMonitor.MeasureBatteryVoltage();
   float converted = PuckBatteryMonitor.ConvertBatteryVoltageToFloat(battery);
+  Serial.print("Battery voltage: ");
   Serial.println(converted);
   delay(120000);
 }
 
 void low_battery_warning() {
-  digitalToggle(27);  // Toggle the led.
+  nrf_gpio_pin_set(kLedPinBlue);  
   Serial.print("Low voltage trigger: ");
   Serial.println(PuckBatteryMonitor.GetEvent());
   // "0" event means that battery voltage is below reference voltage (3.5V)
