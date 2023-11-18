@@ -174,6 +174,15 @@ class BleManager {
 	buffer[0] = num;
 	this.writeMessage(MESSAGE_TYPE_VOLUME, buffer);
     }
+
+    /**
+     * Toggle the stream state
+     */
+    streamToggle() {
+	if(!this.connected) { return; }
+	this.log("Toggle stream");	
+	this.writeMessage(MESSAGE_TYPE_TOGGLE, new Uint8Array(0));
+    }
     
     
     /**

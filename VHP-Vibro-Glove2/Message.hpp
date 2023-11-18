@@ -30,11 +30,10 @@
 
 #include "cpp/constants.h"
 #include "cpp/slice.h"
-// #include "cpp/settings.h"
-// #include "dsp/channel_map.h"
-// #include "tactile/envelope_tracker.h"
 #include "tactile/tuning.h"
 #include "dsp/serialize.h"
+
+#include "Settings.hpp"
 
 namespace audio_tactile {
 
@@ -54,9 +53,11 @@ enum class MessageType {
   kPauzedCycles = 9,
   kJitter = 10,
   kTestMode = 11,
-  kGetStatusBatch = 12,
-  kGetVolume = 13,
-  kGetSettings = 14,
+  kStatusBatch = 12,
+  kGetStatusBatch = 13,
+  kGetVolume = 14,
+  kSettingsBatch = 15, 
+  kGetSettingsBatch = 16,
 };
 
 // Recipients of messages -- Not used, can be removed
@@ -143,12 +144,49 @@ class Message {
     SetTypeAndPayload(MessageType::kVolume, Slice<uint8_t,1>(volume_bytes));
   }
 
-  // Reads the volume from a kVolume message.
-  bool ReadVolume(uint8_t* volume) const {
-    *volume = *payload().data();
+  // Writes a kSettings message
+  void WriteSettings(const Settings& settings) {
+    uint8_t* dest = bytes_ + kHeaderSize;
+
+    *dest = settings.chan8 ? 1 : 0; dest++;
+    ::LittleEndianWriteU32(settings.stimfreq, dest); dest += 4;
+    ::LittleEndianWriteU32(settings.stimduration, dest); dest += 4;
+    ::LittleEndianWriteU32(settings.cycleperiod, dest); dest += 4;
+    ::LittleEndianWriteU32(settings.pauzecycleperiod, dest); dest += 4;
+    ::LittleEndianWriteU32(settings.pauzedcycles, dest); dest += 4;
+    ::LittleEndianWriteU32(settings.jitter, dest); dest += 4;
+    *dest = settings.test_mode ? 1 : 0; dest++;
+    
+    bytes_[3] = dest - (bytes_ + kHeaderSize);
+    set_type(MessageType::kSettingsBatch);
+  }
+
+  
+  // Reads uint8 from a BLE message
+  bool Read(uint8_t* v) const {
+    *v = *payload().data();
     return true;
   }
 
+  // Reads bool value from a BLE messag
+  // Payload must equal to 1 for true
+  bool Read(bool* b) const {
+    *b = *payload().data() == 1;
+    return true;
+  }
+
+  // Reads uint16 from a BLE message
+  bool Read(uint16_t* v) const {
+    *v = ::LittleEndianReadU16(payload().data());
+    return true;
+  }
+
+  
+  // Reads uint32 from a BLE message
+  bool Read(uint32_t* v) const {
+    *v = ::LittleEndianReadU32(payload().data());
+    return true;
+  }
 
  private:
   int payload_size() const { return bytes_[3]; }

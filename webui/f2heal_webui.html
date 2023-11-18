@@ -21,8 +21,10 @@
       
     <div>
       <fieldset class="panel panel-clear">
-	<legend>Volume</legend>
-	<input id="volume" type="range" min="0" max="100" step="1" value="25" disabled="true" onchange="bleInstance.setVolume(this.value)">
+	<legend>Stream</legend>
+	<button id="toggleStream" onclick="bleInstance.streamToggle()">Toggle Stream</button><br>
+	<label>Volume: </label>
+	<input id="volume" type="range" min="0" max="100" step="1" value="25" disabled="true" onchange="bleInstance.setVolume(this.value)"><br>
       </fieldset>
     </div>
     
@@ -63,13 +65,15 @@
        * @param {boolean} connected A flag to indicate whether a BLE device
        *    is currently connected.
        */
-      function updateButtonState(connected) {
+      function updateBLEConnectionState(connected) {
 	  if (connected) {
 	      document.getElementById('clientConnectButton').innerHTML = 'Disconnect';
 	      document.getElementById('volume').disabled = false;
+	      document.getElementById('toggleStream').disabled = false;
 	  } else {
 	      document.getElementById('clientConnectButton').innerHTML = 'Connect';
-	      document.getElementById('volume').disabled = true;      
+	      document.getElementById('volume').disabled = true;
+	      document.getElementById('toggleStream').disabled = true;
 	  }
       }
 
@@ -78,13 +82,14 @@
        * Update UI elements when volume reading is received from BLE.
        */
       function updateVolume(num) {
-      logFunction("Setting volume to: " + num);
+	  logFunction("Setting volume to: " + num);
 	  document.getElementById("volume").value = num;
       }
       
-      var bleInstance = new BleManager(logFunction, updateButtonState, updateVolume);
+      var bleInstance = new BleManager(logFunction, updateBLEConnectionState, updateVolume);
       
 
     </script>
   </body>
 </html>
+
