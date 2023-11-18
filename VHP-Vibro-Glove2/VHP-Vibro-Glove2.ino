@@ -4,17 +4,24 @@
 #include "board_defs.h"
 #include "battery_monitor.h"
 
+#include "cpp/std_shim.h"
+
+#include "BleComm.hpp"
 #include "SStream.hpp"
 
 using namespace audio_tactile;
-
 // Output sequence for board Apollo84 hardware
 //int order_pairs[8] = {0, 3, 4, 5, 11, 9, 8, 6};
 
 // Output sequence for Godef Hardware
-uint16_t order_pairs[8] = {4, 5, 6, 7, 8, 9, 10, 11}; 
+const uint16_t order_pairs[8] = {4, 5, 6, 7, 8, 9, 10, 11}; 
 
-SStream *p;
+
+SStream *p = 0;
+
+
+bool g_ble_connected = false;
+uint8_t g_volume = 75;
 
 void setup() {
   nrf_gpio_cfg_output(kLedPinBlue);
@@ -60,10 +67,14 @@ void setup() {
     nrf_pwm_task_trigger(NRF_PWM1, NRF_PWM_TASK_SEQSTART0);
     nrf_pwm_task_trigger(NRF_PWM2, NRF_PWM_TASK_SEQSTART0);
 
-    nrf_gpio_pin_clear(kLedPinBlue);
 
     PuckBatteryMonitor.InitializeLowVoltageInterrupt();
     PuckBatteryMonitor.OnLowBatteryEventListener(low_battery_warning);
+
+    BleCom.Init("F2Heal VHP", OnBleEvent);
+    
+    nrf_gpio_pin_clear(kLedPinBlue);
+    
 }
 
 
@@ -91,3 +102,42 @@ void low_battery_warning() {
   // "1" event means above.
 }
 
+
+void OnBleEvent() {
+  switch (BleCom.event()) {
+    case BleEvent::kConnect:
+      Serial.println("BLE: Connected.");
+      g_ble_connected = true;
+      break;
+    case BleEvent::kDisconnect:
+      Serial.println("BLE: Disconnected.");
+      g_ble_connected = false;
+      break;
+    case BleEvent::kInvalidMessage:
+      Serial.println("BLE: Invalid message.");
+      break;
+    case BleEvent::kMessageReceived:
+      HandleMessage(BleCom.rx_message());
+      break;
+  }
+}
+
+void HandleMessage(const Message& message) {
+  switch (message.type()) {
+  case MessageType::kVolume:
+    Serial.println("Message: Volume.");
+    message.ReadVolume(&g_volume);
+    Serial.print("Volume: ");
+    Serial.println(g_volume);
+    break;
+  case MessageType::kGetVolume:
+    Serial.println("Message: GetVolume.");
+    BleCom.tx_message().WriteVolume(g_volume);
+    BleCom.SendTxMessage();
+    break;
+
+  default:
+    Serial.println("Unhandled message.");
+    break;
+  }
+}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="f2heal_webui.css">
+    <title>F2Heal Web UI</title>
+  </head>
+  <body>
+    <h1>F2Heal Web UI</h1>
+    <div id="connectionPanel" class="panel">
+      <button id="clientConnectButton" onclick="bleInstance.connectionToggle()">Connect</button>
+    </div>
+
+    <!-- <div>     -->
+    <!--   <h1>Battery Voltage:</h1> -->
+    <!--   <h2 id="batteryVoltage">Waiting for battery voltage...</h2> -->
+
+    <!--   <h1>Temperature: </h1> -->
+    <!--   <h2 id="temperature">Waiting for temperature sensor...</h2> -->
+    <!-- </div> -->
+      
+    <div>
+      <fieldset class="panel panel-clear">
+	<legend>Volume</legend>
+	<input id="volume" type="range" min="0" max="100" step="1" value="25" disabled="true" onchange="bleInstance.setVolume(this.value)">
+      </fieldset>
+    </div>
+    
+    <div>
+      <fieldset class="panel panel-clear">
+	<legend>Log</legend>
+	<textarea id="logDisplay" rows="20" cols="105" readonly="true"></textarea>
+      </fieldset>
+    </div>
+      
+    <script src="./f2heal_library.js"></script>
+    <script>
+      var logDisplay = document.getElementById('logDisplay');
+      var logLines = [];
+      /**
+       * Appends a message to the log window. A newline is inserted after
+       * the message.
+       * @param {string} s A string to be displayed in the log window.
+       */
+      var logFunction = function log(s) {
+	  // If the log gets long, discard old messages to keep UI responsive.
+	  var discard = (logLines.length >= 100);
+	  if (discard) {
+	      logLines = logLines.slice(-99);
+	  }
+	  var now = new Date();
+	  var timestamp = ('00' + now.getHours()).slice(-2) + ':' +
+	      ('00' + now.getMinutes()).slice(-2) + ':' +
+	      ('00' + now.getSeconds()).slice(-2) + '.' +
+	      ('000' + now.getMilliseconds()).slice(-3);
+	  logLines.push(timestamp + ' -> ' + s);
+	  logDisplay.value = logLines.join('\n');
+	  logDisplay.scrollTop = logDisplay.scrollHeight;
+      }
+
+      /**
+       * Updates UI elements after connecting or disconnecting BLE.
+       * @param {boolean} connected A flag to indicate whether a BLE device
+       *    is currently connected.
+       */
+      function updateButtonState(connected) {
+	  if (connected) {
+	      document.getElementById('clientConnectButton').innerHTML = 'Disconnect';
+	      document.getElementById('volume').disabled = false;
+	  } else {
+	      document.getElementById('clientConnectButton').innerHTML = 'Connect';
+	      document.getElementById('volume').disabled = true;      
+	  }
+      }
+
+
+      /**
+       * Update UI elements when volume reading is received from BLE.
+       */
+      function updateVolume(num) {
+      logFunction("Setting volume to: " + num);
+	  document.getElementById("volume").value = num;
+      }
+      
+      var bleInstance = new BleManager(logFunction, updateButtonState, updateVolume);
+      
+
+    </script>
+  </body>
+</html>
