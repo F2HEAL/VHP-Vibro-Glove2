@@ -19,11 +19,11 @@
 	<label for="a_running">Running: </label>
 	<input id="a_running" type="checkbox" disabled="true"><br>
 
-    <label for="a_runningsince">Running Since (ms): </label>
+    <label for="a_runningsince">Running Since: </label>
 	<input id="a_runningsince" type="text" value="-1" disabled="true"><br>
 
 	<label for="a_battery">Battery Voltage: </label>
-	<input id="a_battery" type="number" value="-1" disabled="true"><br>
+	<input id="a_battery" type="text" value="-1" disabled="true"><br>
       </fieldset>
     </div>
 
@@ -31,7 +31,7 @@
       <fieldset class="panel panel-clear">
 	<legend>Stream</legend>
 
-	<button id="toggleStream" onclick="bleInstance.streamToggle()">Toggle Stream</button><br>
+	<button id="toggleStream" onclick="bleInstance.streamToggle()" disabled="true">Start Stream</button><br>
 
 	<label for="s_volume">Volume: </label>
 	<input id="s_volume"   type="range"   min="0" max="100" step="1" value="25" disabled="true" onchange="bleInstance.setVolume(this.value)"><br>
@@ -119,6 +119,7 @@
 	  document.getElementById('a_battery').value = bleInstance.a_battery;
     
 	  if(bleInstance.connected && bleInstance.a_running) {
+	      document.getElementById('toggleStream').innerHTML = 'Stop Stream';	      
 	      document.getElementById('s_volume').disabled = true;
 	      document.getElementById('s_chan8').disabled = true;
 	      document.getElementById('s_stimfreq').disabled = true;
@@ -129,6 +130,7 @@
 	      document.getElementById('s_jitter').disabled = true;
 	      document.getElementById('s_test_mode').disabled = true;	      
 	  } else {
+	      document.getElementById('toggleStream').innerHTML = 'Start Stream';
 	      document.getElementById('s_volume').disabled = false;
 	      document.getElementById('s_chan8').disabled = false;
 	      document.getElementById('s_stimfreq').disabled = false;
@@ -155,7 +157,7 @@
 	  } else {
 	      document.getElementById('clientConnectButton').innerHTML = 'Connect';
 	      document.getElementById('toggleStream').disabled = true;
-	      document.getElementById('refreshButton').disabled = true;	      
+	      document.getElementById('refreshButton').disabled = true;
 	  }
 
 	  updateStreamConnectionState();

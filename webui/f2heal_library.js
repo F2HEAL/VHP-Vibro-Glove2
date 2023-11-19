@@ -96,7 +96,8 @@ function connect(bleManager) {
 	    bleManager.connected = true;
 	    bleManager.onConnectionUIUpdate(bleManager.connected);
 	    // Send "get settings batch" request to the device.
-	    bleManager.requestStatusBatch();
+	    //bleManager.requestStatusBatch();
+	    bleManager.requestSettingsBatch();
 	})
 	.catch(error => {
 	    bleManager.log('Error: ' + error);
@@ -184,6 +185,8 @@ class BleManager {
 	this.log("Receive Volume (" + messagePayload + ")");
 	let value = new Uint8Array(messagePayload.buffer);
 	this.volumeUpdate(value[0]);
+
+	this.requestStatusBatch();
     }
     
     /**
@@ -265,11 +268,8 @@ class BleManager {
 		 + ", runningsince: " + this.a_runningsince
 		 + ", battery: " + this.a_battery);
 
-	this.requestSettingsBatch();
+
     }
-    
-
-
     
     /**
      * Send a request to the device for the current Volume
