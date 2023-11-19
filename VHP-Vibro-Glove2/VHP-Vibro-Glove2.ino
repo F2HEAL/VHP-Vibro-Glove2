@@ -3,6 +3,7 @@
 #include "pwm_sleeve.h"
 #include "board_defs.h"
 #include "battery_monitor.h"
+#include "ui.h"
 
 #include "cpp/std_shim.h"
 
@@ -50,6 +51,9 @@ void setup() {
   BleCom.Init("F2Heal VHP", OnBleEvent);
 
   SetSilence();
+
+  DeviceUi.Initialize(kTactileSwitchPin);
+  DeviceUi.OnUiEventListener(ToggleStream);
   
   nrf_gpio_pin_clear(kLedPinBlue);
   nrf_gpio_pin_clear(kLedPinGreen);  
@@ -112,16 +116,15 @@ void OnBleEvent() {
 }
 
 void ToggleStream() {
-  if(!g_ble_connected) {
-    Serial.println("BLE: Not connected. Cannot toggle Stream.");
-    return;
-  }
+  // if(!g_ble_connected) {
+  //   Serial.println("BLE: Not connected. Cannot toggle Stream.");
+  //   return;
+  // }
 
   if(g_running) {
     nrf_gpio_pin_clear(kLedPinGreen);    
     Serial.println("Stream already running. Stopping.");
     g_running = false;
-    delay(10);
     delete g_stream;
   } else {
     nrf_gpio_pin_set(kLedPinGreen);
@@ -140,7 +143,6 @@ void ToggleStream() {
     g_running_since = millis(); 
   }
 
-  SendStatus();
 }
 
 void SendStatus() {
@@ -175,6 +177,7 @@ void HandleMessage(const Message& message) {
   case MessageType::kToggle:
     Serial.println("Message: Toggle.");
     ToggleStream();
+    SendStatus();
     break;
   case MessageType::k8Channel:
     message.Read(&g_settings.chan8);
