@@ -25,6 +25,7 @@ uint16_t g_silence[8];
 bool g_ble_connected = false;
 bool g_running = false;
 uint8_t g_volume = 75;
+uint64_t g_running_since = 0;
 
 void setup() {
   nrf_gpio_cfg_output(kLedPinBlue);
@@ -51,7 +52,7 @@ void setup() {
   SetSilence();
   
   nrf_gpio_pin_clear(kLedPinBlue);
-    
+  nrf_gpio_pin_clear(kLedPinGreen);  
 }
 
 
@@ -136,10 +137,29 @@ void ToggleStream() {
 			   g_volume * g_settings.vol_amplitude / 100,
 			   g_settings.test_mode);
     g_running = true;
-  }    
+    g_running_since = millis(); 
+  }
+
+  SendStatus();
+}
+
+void SendStatus() {
+  Serial.println("Message: GetStatus.");
+  uint16_t battery_voltage_uint16 = PuckBatteryMonitor.MeasureBatteryVoltage();
+  float battery_voltage_float = PuckBatteryMonitor.ConvertBatteryVoltageToFloat(battery_voltage_uint16);
+
+  uint64_t running_period = 0;
+  if(g_running) {
+    running_period = millis() - g_running_since;
+  }
+  
+  BleCom.tx_message().WriteStatus(g_running, running_period, battery_voltage_float);
+  BleCom.SendTxMessage();
 }
 
 void HandleMessage(const Message& message) {
+  
+  
   switch (message.type()) {
   case MessageType::kVolume:
     message.Read(&g_volume);
@@ -201,6 +221,9 @@ void HandleMessage(const Message& message) {
     BleCom.tx_message().WriteSettings(g_settings);
     BleCom.SendTxMessage();
     break;
+  case MessageType::kGetStatusBatch:
+    SendStatus();
+    break;    
   default:
     Serial.println("Unhandled message.");
     break;

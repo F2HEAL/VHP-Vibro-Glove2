@@ -161,6 +161,22 @@ class Message {
     set_type(MessageType::kSettingsBatch);
   }
 
+  // Writes a kStatus message
+  void WriteStatus(const bool running,
+		   const uint64_t& running_since,
+		   const float battery_voltage) {
+
+    
+    uint8_t* dest = bytes_ + kHeaderSize;
+    
+    *dest = running ? 1 : 0; dest++;
+    ::LittleEndianWriteU64(running_since, dest); dest += 8;
+    ::LittleEndianWriteF32(battery_voltage, dest); dest += 4;
+
+    bytes_[3] = dest - (bytes_ + kHeaderSize);
+    set_type(MessageType::kStatusBatch);
+  }
+  
   
   // Reads uint8 from a BLE message
   bool Read(uint8_t* v) const {
