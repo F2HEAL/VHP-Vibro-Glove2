@@ -116,15 +116,11 @@ void OnBleEvent() {
 }
 
 void ToggleStream() {
-  // if(!g_ble_connected) {
-  //   Serial.println("BLE: Not connected. Cannot toggle Stream.");
-  //   return;
-  // }
 
   if(g_running) {
+    g_running = false;    
     nrf_gpio_pin_clear(kLedPinGreen);    
     Serial.println("Stream already running. Stopping.");
-    g_running = false;
     delete g_stream;
   } else {
     nrf_gpio_pin_set(kLedPinGreen);
@@ -143,6 +139,9 @@ void ToggleStream() {
     g_running_since = millis(); 
   }
 
+  if(g_ble_connected) {
+    SendStatus();    
+  }
 }
 
 void SendStatus() {
@@ -177,7 +176,6 @@ void HandleMessage(const Message& message) {
   case MessageType::kToggle:
     Serial.println("Message: Toggle.");
     ToggleStream();
-    SendStatus();
     break;
   case MessageType::k8Channel:
     message.Read(&g_settings.chan8);
