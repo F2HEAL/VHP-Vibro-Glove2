@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="f2heal_webui.css">
+    <title>F2Heal Web UI</title>
+  </head>
+  <body>
+    <h1>F2Heal Web UI</h1>
+    <div id="connectionPanel" class="panel">
+      <button id="clientConnectButton" onclick="bleInstance.connectionToggle()">Connect</button>
+      <button id="refreshButton" onclick="bleInstance.requestStatusBatch()" disabled="true">Refresh</button>
+    </div>
+
+    <div>
+      <fieldset class="panel panel-clear">
+	<legend>Status</legend>
+
+	<label for="a_running">Running: </label>
+	<input id="a_running" type="checkbox" disabled="true"><br>
+
+    <label for="a_runningsince">Running Since: </label>
+	<input id="a_runningsince" type="text" value="-1" disabled="true"><br>
+
+	<label for="a_battery">Battery Voltage: </label>
+	<input id="a_battery" type="text" value="-1" disabled="true"><br>
+      </fieldset>
+    </div>
+
+    <div>
+      <fieldset class="panel panel-clear">
+	<legend>Stream</legend>
+
+	<button id="toggleStream" onclick="bleInstance.streamToggle()" disabled="true">Start Stream</button><br>
+
+	<label for="s_volume">Volume: </label>
+	<input id="s_volume"   type="range"   min="0" max="100" step="1" value="25" disabled="true" onchange="bleInstance.setVolume(this.value)"><br>
+
+	<label for="s_chan8">Channel 8</label>
+	<input id="s_chan8"    type="checkbox" onchange="bleInstance.setMessageBool(MESSAGE_TYPE_8_CHANNEL, this.checked)" disabled="true"><br>
+
+	<label for="s_stimfreq">Stimulation Frequency</label>
+	<input id="s_stimfreq" type="number"  min="0" max="2500" value="0" disabled="true" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_STIM_FREQ, this.value)"><br>
+
+	<label for="s_stimdur">Stimulaion Duration</label>
+	<input id="s_stimdur" type="number" min="0" value="0" disabled="true" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_STIM_DURATION,this.value)"><br>
+
+	<label for="s_cycleperiod">Cycle Period</label>
+	<input id="s_cycleperiod" type="number" min="0" value="0" disabled="true" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_CYCLE_PERIOD,this.value)"><br>
+
+	<label for="s_pauzecycleperiod">Pauze Cycle Period</label>
+	<input id="s_pauzecycleperiod" type="number" min="0" value="0" disabled="true" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_PAUZE_CYCLE_PERIOD,this.value)"><br>
+
+	<label for="s_pauzedcycles">Pauzed Cycles</label>
+	<input id="s_pauzedcycles" type="number" min="0" value="0" disabled="true" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_PAUZED_CYCLES, this.value)"><br>
+
+	<label for="s_jitter">Jitter</label>
+	<input id="s_jitter" type="number" min="0" max="1000" value="0" disable="true" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_JITTER, this.value)"><br>
+
+	<label for="s_test_mode">Test mode</label>
+	<input id="s_test_mode" type="checkbox" onchange="bleInstance.setMessageBool(MESSAGE_TYPE_TEST_MODE, this.checked)" disabled="true"><br>
+	
+      </fieldset>
+    </div>
+    
+    <div>
+      <fieldset class="panel panel-clear">
+	<legend>Log</legend>
+	<textarea id="logDisplay" rows="20" cols="105" readonly="true"></textarea>
+      </fieldset>
+    </div>
+      
+    <script src="./f2heal_library.js"></script>
+    <script>
+      var logDisplay = document.getElementById('logDisplay');
+      var logLines = [];
+      /**
+       * Appends a message to the log window. A newline is inserted after
+       * the message.
+       * @param {string} s A string to be displayed in the log window.
+       */
+      var logFunction = function log(s) {
+	  // If the log gets long, discard old messages to keep UI responsive.
+	  var discard = (logLines.length >= 100);
+	  if (discard) {
+	      logLines = logLines.slice(-99);
+	  }
+	  var now = new Date();
+	  var timestamp = ('00' + now.getHours()).slice(-2) + ':' +
+	      ('00' + now.getMinutes()).slice(-2) + ':' +
+	      ('00' + now.getSeconds()).slice(-2) + '.' +
+	      ('000' + now.getMilliseconds()).slice(-3);
+	  logLines.push(timestamp + ' -> ' + s);
+	  logDisplay.value = logLines.join('\n');
+	  logDisplay.scrollTop = logDisplay.scrollHeight;
+      }
+
+
+      function msToTime(duration) {
+	  var milliseconds = Math.floor((duration % 1000) / 100),
+	      seconds = Math.floor((duration / 1000) % 60),
+	      minutes = Math.floor((duration / (1000 * 60)) % 60),
+	      hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+	  
+	  hours = (hours < 10) ? "0" + hours : hours;
+	  minutes = (minutes < 10) ? "0" + minutes : minutes;
+	  seconds = (seconds < 10) ? "0" + seconds : seconds;
+	  
+	  return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+      }
+
+
+      /**
+      * Updates UI elements after starting / stopping streaming.
+      */
+      function updateStreamConnectionState() {
+	  document.getElementById('a_running').checked = bleInstance.a_running;
+	  document.getElementById('a_runningsince').value = msToTime(Number(bleInstance.a_runningsince));
+	  document.getElementById('a_battery').value = bleInstance.a_battery;
+    
+	  if(bleInstance.connected && bleInstance.a_running) {
+	      document.getElementById('toggleStream').innerHTML = 'Stop Stream';	      
+	      document.getElementById('s_volume').disabled = true;
+	      document.getElementById('s_chan8').disabled = true;
+	      document.getElementById('s_stimfreq').disabled = true;
+	      document.getElementById('s_stimdur').disabled = true;
+	      document.getElementById('s_cycleperiod').disabled = true;
+	      document.getElementById('s_pauzecycleperiod').disabled = true;
+	      document.getElementById('s_pauzedcycles').disabled = true;
+	      document.getElementById('s_jitter').disabled = true;
+	      document.getElementById('s_test_mode').disabled = true;	      
+	  } else {
+	      document.getElementById('toggleStream').innerHTML = 'Start Stream';
+	      document.getElementById('s_volume').disabled = false;
+	      document.getElementById('s_chan8').disabled = false;
+	      document.getElementById('s_stimfreq').disabled = false;
+	      document.getElementById('s_stimdur').disabled = false;
+	      document.getElementById('s_cycleperiod').disabled = false;
+	      document.getElementById('s_pauzecycleperiod').disabled = false;
+	      document.getElementById('s_pauzedcycles').disabled = false;
+	      document.getElementById('s_jitter').disabled = false;
+	      document.getElementById('s_test_mode').disabled = false;	      
+	  }
+      }
+
+
+      /**
+       * Updates UI elements after connecting or disconnecting BLE.
+       * @param {boolean} connected A flag to indicate whether a BLE device
+       *    is currently connected.
+       */
+      function updateBLEConnectionState() {
+	  if (bleInstance.connected) {
+	      document.getElementById('clientConnectButton').innerHTML = 'Disconnect';
+	      document.getElementById('toggleStream').disabled = false;
+	      document.getElementById('refreshButton').disabled = false;	      
+	  } else {
+	      document.getElementById('clientConnectButton').innerHTML = 'Connect';
+	      document.getElementById('toggleStream').disabled = true;
+	      document.getElementById('refreshButton').disabled = true;
+	  }
+
+	  updateStreamConnectionState();
+      }
+
+
+      /**
+       * On receive settings batch from BLE, parse and update UI elements.
+       */
+       function updateFromSettingsBatch() {
+	   document.getElementById('s_chan8').checked = bleInstance.s_chan8;
+	   document.getElementById('s_stimfreq').value = bleInstance.s_stimfreq;
+	   document.getElementById('s_stimdur').value = bleInstance.s_stimduration;
+	   document.getElementById('s_cycleperiod').value = bleInstance.s_cycleperiod;
+	   document.getElementById('s_pauzecycleperiod').value = bleInstance.s_pauzecycleperiod;
+	   document.getElementById('s_pauzedcycles').value = bleInstance.s_pauzedcycles;
+	   document.getElementById('s_jitter').value = bleInstance.s_jitter;
+	   document.getElementById('s_test_mode').checked = bleInstance.s_testmode;
+       }
+      
+      /**
+       * Update UI elements when volume reading is received from BLE.
+       */
+      function updateVolume(num) {
+	  logFunction("Setting volume to: " + num);
+	  document.getElementById("s_volume").value = num;
+      }
+      
+      var bleInstance = new BleManager(logFunction,
+				       updateBLEConnectionState,
+				       updateVolume,
+				       updateStreamConnectionState,
+				      updateFromSettingsBatch);
+      
+
+    </script>
+  </body>
+</html>
+
