@@ -27,11 +27,17 @@
       </fieldset>
     </div>
 
+
     <div>
       <fieldset class="panel panel-clear">
-	<legend>Stream</legend>
-
+	<legend>Stream Control</legend>
 	<button id="toggleStream" onclick="bleInstance.streamToggle()" disabled="true">Start Stream</button><br>
+      </fieldset>
+    </div>
+    
+    <div>
+      <fieldset class="panel panel-clear">
+	<legend>Stream Settings</legend>
 
 	<label for="s_volume">Volume: </label>
 	<input id="s_volume"   type="range"   min="0" max="100" step="1" value="25" disabled="true" onchange="bleInstance.setVolume(this.value)"><br>
