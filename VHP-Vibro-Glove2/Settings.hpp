@@ -20,7 +20,8 @@ struct Settings {
   uint32_t vol_amplitude = 278;
   bool test_mode = false;
 
-  uint32_t default_channels = 8;
+  const uint32_t default_channels = 8;
+  const bool     start_stream_on_power_on = false;
   
 } g_settings;
 

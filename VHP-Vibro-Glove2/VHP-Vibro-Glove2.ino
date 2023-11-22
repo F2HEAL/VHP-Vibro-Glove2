@@ -54,9 +54,15 @@ void setup() {
 
   DeviceUi.Initialize(kTactileSwitchPin);
   DeviceUi.OnUiEventListener(ToggleStream);
-  
+
   nrf_gpio_pin_clear(kLedPinBlue);
   nrf_gpio_pin_clear(kLedPinGreen);  
+  
+  if(g_settings.start_stream_on_power_on) {
+    ToggleStream();
+  }
+  
+
 }
 
 
