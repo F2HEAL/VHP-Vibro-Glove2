@@ -14,6 +14,9 @@ Open *f2heal_webui.html*  found in [WebUI folder](../webui) in a browser to use 
 
 Use the **connect** button to connect to a device.
 
+![Untitled](https://github.com/F2HEAL/VHP-Vibro-Glove2/assets/18469570/8b7ff73a-4cba-4c3a-8cf3-60352a2c406f)
+
+
 ### Browsers
 
 #### Chrome
