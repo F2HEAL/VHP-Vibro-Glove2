@@ -10,15 +10,15 @@ The software can be controlled with a browser supporting Bluetooth Web API.
 
 After starting the device will activate its Bluetooth connection, and start accepting connections. Note that the Bluetooth interface will deactivate after 5mins of inactivity.
 
-Open the files found in [WebUI folder](../webui) in a browser to use this feature. A recent version can be on [WebUI F2Heal](https://webui.f2heal.com).
+Open *f2heal_webui.html*  found in [WebUI folder](../webui) in a browser to use this feature. A recent version can be on [WebUI F2Heal](https://webui.f2heal.com).
 
-Use the connect button to connect to a device.
+Use the **connect** button to connect to a device.
 
 ### Browsers
 
 #### Chrome
 
-Currently only working with the Chrome Browser with the 'enable-experimental-web-platform-features' flag enabled.
+Successfully tested with Chrome. It might be necessary to enable experimental features by setting the 'enable-experimental-web-platform-features' flag to enabled.
 
 Change this in your browser by going to: 
 
@@ -38,7 +38,8 @@ These parameters are defined and documented in [SStream.hpp](VHP-Vibro-Glove2/SS
 
 ![image](https://github.com/F2HEAL/VHP-Vibro-Glove2/assets/18469570/fc01761d-4320-4044-b50b-c7768205cf2b)
 
- The default settings in [VHP-Vibro-Glove2.ino](VHP-Vibro-Glove2/VHP-Vibro-Glove2.ino) provide with a balanced default settings:
+ The default settings in  [Settings.hpp](../VHP-Vibro-Glove2/Settings.hpp) provide with a balanced default:
+ 
  * 8 channels
  * Samplerate 46875Hz, long story, tied to SetUpsamplingFactor(1), only touch it if you know what you're doing ;-)
  * Stimulation frequency 250Hz
@@ -53,4 +54,4 @@ These parameters are defined and documented in [SStream.hpp](VHP-Vibro-Glove2/SS
 * Jitter 23.5% : This is 23.5% of 1332ms / 8 or 39.1ms, so well below the 66.5ms of silence calculated above
 
 
-**WARNING:** it is up to the user to ensure that the configured values make sense, such as that the Jitter is not higher than silence after the stimulation. The [settings.ods](settings.ods) spreadsheet can be used to verify your settings.
+**Warning:** Not all settings make sense. The [settings.ods](settings.ods) spreadsheet can be used to verify your settings.
