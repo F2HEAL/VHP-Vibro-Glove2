@@ -1,14 +1,32 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+
 #ifndef SETTINGS_HPP_
 #define SETTINGS_HPP_
 
 /**
- * Default stream settings.
+ * Default settings.
  *
- * These settins will be used when the device is powered up.
+ * These settings will be used when the device is powered up. 
  */
 struct Settings {
+
+  /*
+   * Configuration constants
+   */
+
+ 
+  const uint32_t default_channels = 8;  /* Number of channels silence is played
+					   on when stream is not playing */
+  
+  const bool     start_stream_on_power_on = false; /* Start Stream on Power On */
+
+
+  /*
+   * The default values for starting the Stream, see Stream.hpp for explanation.
+   *
+   * These values are configurable using the Bluetooth Web UI.
+   */
   bool chan8 = true;
   uint32_t samplerate = 46875;
   uint32_t stimfreq = 250;
@@ -20,8 +38,7 @@ struct Settings {
   uint32_t vol_amplitude = 278;
   bool test_mode = false;
 
-  const uint32_t default_channels = 8;
-  const bool     start_stream_on_power_on = false;
+
   
 } g_settings;
 
