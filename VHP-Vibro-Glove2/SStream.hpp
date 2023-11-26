@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-#ifndef SSTREAM_HPP_
-#define SSTREAM_HPP_
-
 #include <stdint.h>
+
 #include "SampleCache.hpp"
 
+#ifndef SSTREAM_HPP_
+#define SSTREAM_HPP_
 
 /**
  * SStream - class to generate vibration stream on 4 or 8 channels
@@ -17,9 +17,9 @@
  * PWM driver, sample_frames are used. In a sample_frame, 8 samples
  * have been consumed by the hardware.
  *
- * * calling next_sample_frame() indicates that a cycle has passed
- * * chan_samples() produces the 8 samples for the given channel in the
- *   current cycle
+ * next_sample_frame() indicates that a cycle has passed
+ * chan_samples() produces the 8 samples for the given channel in the
+ * current cycle
  */
 
 class SStream {
@@ -130,19 +130,31 @@ private:
      */
     bool channel_is_active_(uint32_t sample, uint32_t channel) const { return channel == active_channel_(sample); }
 
-
-    /**
+public: 
+    /** 
      * @input sample - queried sample number
      * @input channel - queried channel number
      * @returns true if the queried channel is playing for the queried
      * sample. Thus true if stimduration is still ongoing.
      */
-    bool channel_is_playing_(uint32_t sample, uint32_t channel) const {
+    bool channel_is_playing(uint32_t sample, uint32_t channel) const {
 	return channel_is_active_(sample, channel)
 	    && sample % (samples_per_cycle_() / channels())
 	                < stimduration_ * samplerate_ / 1000; }
     
-public:
+
+
+
+    const uint32_t chan_is_currently_playing(uint32_t chan) {
+	const int32_t frame_first_sample = frame_counter_ * samples_per_frame_ - channel_jitter_[chan % channels()];
+	if(frame_first_sample < 0 || cycle_is_pauzed_() || !channel_is_playing(frame_first_sample, chan % channels())) {
+	    return false;
+	} else {
+	    return true;
+	}
+
+    }
+	
     /**
      * @return Total number of unique active channels
      */
@@ -150,9 +162,8 @@ public:
     
     /**
      * Advances internal state to the next sample frame
-     * @return true if new cycle was started
      */
-    bool next_sample_frame() {
+    void next_sample_frame() {
 	frame_counter_++;
 
 	if(frame_counter_  > samples_per_cycle_() / samples_per_frame_) {
@@ -167,11 +178,8 @@ public:
 	    cycle_counter_++;
 	    if(cycle_counter_ >= pauzecycleperiod_)
 		cycle_counter_ = 0;
-
-	    return true;
+	    
 	}
-
-	return false;
     }
 
     /**
@@ -185,7 +193,7 @@ public:
     
     const uint16_t* chan_samples(uint32_t chan) {
 	const int32_t frame_first_sample = frame_counter_ * samples_per_frame_ - channel_jitter_[chan % channels()];
-	if(frame_first_sample < 0 || cycle_is_pauzed_() || !channel_is_playing_(frame_first_sample, chan % channels())) 
+	if(frame_first_sample < 0 || cycle_is_pauzed_() || !channel_is_playing(frame_first_sample, chan % channels())) 
 	    return sample_cache_.silence_;
 	else 
 	    return sample_cache_.cache_ + frame_first_sample % samples_per_stimperiod_();
@@ -222,7 +230,7 @@ private:
      * cycleperiod / 8 [ (from a uniform distribution)
      *
      * This is equivalent to delaying each input with
-     * random(cycleperiod/4)
+     * random(cycleperiod/4) * Jitter / 1000
      *
      * As we support 8 channels, we make this
      * random(cycleperiod / channels)
