@@ -40,7 +40,10 @@
 	<legend>Stream Settings</legend>
 
 	<label for="s_volume">Volume: </label>
-	<input id="s_volume"   type="range"   min="0" max="100" step="1" value="25" disabled="true" onchange="bleInstance.setVolume(this.value)"><br>
+	<input id="s_volume"   type="range"   min="0" max="100" step="1" value="25" disabled="true" onchange="user_updatevolume(this.value)">
+	<input id="s_volume2" type="number" min="0" max="100" disabled="true" onchange="user_updatevolume2(this.value)">
+
+	<br>
 
 	<label for="s_chan8">Channel 8</label>
 	<input id="s_chan8"    type="checkbox" onchange="bleInstance.setMessageBool(MESSAGE_TYPE_8_CHANNEL, this.checked)" disabled="true"><br>
@@ -127,6 +130,7 @@
 	  if(bleInstance.connected && bleInstance.a_running) {
 	      document.getElementById('toggleStream').innerHTML = 'Stop Stream';	      
 	      document.getElementById('s_volume').disabled = true;
+	      document.getElementById('s_volume2').disabled = true;
 	      document.getElementById('s_chan8').disabled = true;
 	      document.getElementById('s_stimfreq').disabled = true;
 	      document.getElementById('s_stimdur').disabled = true;
@@ -138,6 +142,7 @@
 	  } else {
 	      document.getElementById('toggleStream').innerHTML = 'Start Stream';
 	      document.getElementById('s_volume').disabled = false;
+	      document.getElementById('s_volume2').disabled = false;
 	      document.getElementById('s_chan8').disabled = false;
 	      document.getElementById('s_stimfreq').disabled = false;
 	      document.getElementById('s_stimdur').disabled = false;
@@ -190,7 +195,20 @@
       function updateVolume(num) {
 	  logFunction("Setting volume to: " + num);
 	  document.getElementById("s_volume").value = num;
+	  document.getElementById("s_volume2").value = num;
       }
+
+      function user_updatevolume(num) {
+	  document.getElementById("s_volume2").value = num;
+	  bleInstance.setVolume(num);
+      }
+
+      
+      function user_updatevolume2(num) {
+	  document.getElementById("s_volume").value = num;
+	  bleInstance.setVolume(num);
+      }
+      
       
       var bleInstance = new BleManager(logFunction,
 				       updateBLEConnectionState,
