@@ -61,4 +61,4 @@ These parameters are defined and documented in [SStream.hpp](VHP-Vibro-Glove2/SS
 
 Current used settings preset :
 
-![image] doc/settings presets 001.jpg
+![image](https://github.com/F2HEAL/VHP-Vibro-Glove2/blob/main/doc/settings%20presets%20001.jpg)
