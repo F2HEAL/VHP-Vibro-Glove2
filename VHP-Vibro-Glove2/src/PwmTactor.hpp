@@ -142,14 +142,8 @@ namespace audio_tactile {
 	    nrf_gpio_cfg_output(kAmpEnablePin5);
 	    nrf_gpio_cfg_output(kAmpEnablePin6);
 
-	    Serial.println("Initializing PWM module");
-	    delay(100);	    
-	    
 	    // Turn on the speaker amplifiers.
 	    EnableAmplifiers();
-
-	    Serial.println("Enabled amps");
-	    delay(100);	    
 
 	    // Configure the pins.
 	    uint32_t pins_pwm0[4] = {kL1Pin, kR1Pin, kL2Pin, kR2Pin};
@@ -161,9 +155,6 @@ namespace audio_tactile {
 	    InitializePwmModule(NRF_PWM2, pins_pwm2);
 
 
-	    Serial.println("Init pwm modules");	    
-	    delay(100);
-    
 	    // Set the buffer pointers. Need to set it before running PWM.
 	    // Tricky part here is that the buffer is always represents 4 channels:
 	    // <pin 1 PWM> <pin 2 PWM> <pin 3 PWM> <pin 4 PWM> ... <pin 1 PWM>
@@ -177,40 +168,13 @@ namespace audio_tactile {
 	    nrf_pwm_seq_ptr_set(NRF_PWM2, 0, pwm_buffer_ + 2 * kSamplesPerModule);
 
 
-	    Serial.print(PWM0_IRQn);
-	    Serial.print(" - ");
-	    Serial.print(kIrqPriority);
-	    Serial.println("Set ptr/ctr");
-	    
-	    delay(100);
-	    
 	    // Enable global interrupts for PWM.
 	    NVIC_SetPriority(PWM0_IRQn, kIrqPriority);
-
-	    Serial.println("Set ptr/ctr0a");	    
-	    delay(100);
-
-	    
 	    NVIC_EnableIRQ(PWM0_IRQn);
-
-	    Serial.println("Set ptr/ctr0");	    
-	    delay(100);
-
-	    
 	    NVIC_SetPriority(PWM1_IRQn, kIrqPriority);
 	    NVIC_EnableIRQ(PWM1_IRQn);
-
-	    Serial.println("Set ptr/ctr1");	    
-	    delay(100);
-	    
 	    NVIC_SetPriority(PWM2_IRQn, kIrqPriority);
 	    NVIC_EnableIRQ(PWM2_IRQn);
-
-
-	    Serial.println("Set ptr/ctr2");	    
-	    delay(100);
-
-	    
 	}
     
 

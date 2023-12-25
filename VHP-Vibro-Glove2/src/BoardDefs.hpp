@@ -1,12 +1,6 @@
 #ifndef BOARDDEFS_HPP_
 #define BOARDDEFS_HPP_
 
-//#define SLEEVE_BOARD 0
-//#define PUCK_BOARD 0
-//#define SLIM_BOARD 0
-//#define SLIM_V2_BOARD 1
-
-
 #define kLedPinBlue 45
 #define kLedPinGreen 36
 #define kThermistorPin 3
