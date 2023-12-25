@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-#include "pwm_sleeve.h"
-#include "board_defs.h"
-#include "battery_monitor.h"
-#include "ui.h"
+#include "src/PwmTactor.hpp"
+#include "src/BatteryMonitor.hpp"
+#include "src/UI.hpp"
 
-#include "cpp/std_shim.h"
-
-#include "BleComm.hpp"
-#include "SStream.hpp"
-#include "Settings.hpp"
+#include "src/BleComm.hpp"
+#include "src/SStream.hpp"
+#include "src/Settings.hpp"
 
 using namespace audio_tactile;
 // Output sequence for board Apollo84 hardware
@@ -33,10 +30,10 @@ void setup() {
   nrf_gpio_cfg_output(kLedPinGreen);  
   nrf_gpio_pin_set(kLedPinBlue);
 
-  SleeveTactors.OnSequenceEnd(OnPwmSequenceEnd);
-  SleeveTactors.Initialize();
+   PwmTactor.OnSequenceEnd(OnPwmSequenceEnd);
+   PwmTactor.Initialize();
     
-  SleeveTactors.SetUpsamplingFactor(1);
+   PwmTactor.SetUpsamplingFactor(1);
 
   // Warning: issue only in Arduino. When using StartPlayback() it crashes.
   // Looks like NRF_PWM0 module is automatically triggered, and triggering it
@@ -45,10 +42,10 @@ void setup() {
   nrf_pwm_task_trigger(NRF_PWM1, NRF_PWM_TASK_SEQSTART0);
   nrf_pwm_task_trigger(NRF_PWM2, NRF_PWM_TASK_SEQSTART0);
 
-  PuckBatteryMonitor.InitializeLowVoltageInterrupt();
-  PuckBatteryMonitor.OnLowBatteryEventListener(LowBatteryWarning);
+   PuckBatteryMonitor.InitializeLowVoltageInterrupt();
+   PuckBatteryMonitor.OnLowBatteryEventListener(LowBatteryWarning);
 
-  BleCom.Init("F2Heal VHP", OnBleEvent);
+   BleCom.Init("F2Heal VHP", OnBleEvent);
 
   SetSilence();
 
@@ -77,10 +74,10 @@ void OnPwmSequenceEnd() {
     g_stream->next_sample_frame();
     
     for(uint32_t i = 0; i < g_stream->channels(); i++) 
-      SleeveTactors.UpdateChannel(order_pairs[i], g_stream->chan_samples(i));
+      PwmTactor.UpdateChannel(order_pairs[i], g_stream->chan_samples(i));
   } else {
     for(uint32_t i = 0; i < g_settings.default_channels; i++)
-      SleeveTactors.UpdateChannel(order_pairs[i], g_silence);
+      PwmTactor.UpdateChannel(order_pairs[i], g_silence);
   }    
 }
 

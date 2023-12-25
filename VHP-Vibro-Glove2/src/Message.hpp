@@ -28,10 +28,8 @@
 
 #include <stdint.h>
 
-#include "cpp/constants.h"
-#include "cpp/slice.h"
-#include "tactile/tuning.h"
-#include "dsp/serialize.h"
+#include "att/Slice.hpp"
+#include "att/Serialize.hpp"
 
 #include "Settings.hpp"
 

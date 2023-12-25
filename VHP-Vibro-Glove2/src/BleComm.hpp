@@ -35,8 +35,6 @@
 #include <bluefruit.h>
 
 
-#include "cpp/std_shim.h"
-
 #include "Message.hpp"
 
 namespace audio_tactile {
