@@ -6,7 +6,7 @@
 
 using namespace std;
 
-#include "VHP-Vibro-Glove2/SStream.hpp"
+#include "VHP-Vibro-Glove2/src/SStream.hpp"
 
 int main() 
 {
