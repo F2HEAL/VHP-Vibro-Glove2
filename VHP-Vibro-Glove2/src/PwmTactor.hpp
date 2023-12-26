@@ -59,8 +59,7 @@
 #include "BoardDefs.hpp"
 #include "nrf_pwm.h"
 
-namespace 
-{
+namespace {
     extern "C" {
 	static uint8_t pwm_event;
 
@@ -69,9 +68,7 @@ namespace
 	void on_pwm_sequence_end(void (*function)(void)) { pwm_callback = function; }
 
 	uint8_t get_pwm_event() { return pwm_event; }
-
-
-
+	
 	void pwm_irq_handler(NRF_PWM_Type* pwm_module, uint8_t which_pwm_module) {
 	    /* Triggered when pwm data is trasfered to RAM with Easy DMA. */
 	    if (nrf_pwm_event_check(pwm_module, NRF_PWM_EVENT_SEQSTARTED0)) {
@@ -247,14 +244,6 @@ namespace audio_tactile {
 	    nrf_pwm_task_trigger(NRF_PWM2, NRF_PWM_TASK_SEQSTART0);
 	}
 
-
-	// This function is called when the sequence is finished playing.
-	void IrqHandler(NRF_PWM_Type* pwm_module, uint8_t which_pwm_module);
-
-	// Set new PWM values in a module. Copies them to the playback buffer.
-	// There are 4 channels, written in a continuous block of RAM.
-	// The size of the data should be 4 * kNumPwmValues.
-	//void UpdatePwmModule(const uint16_t* data, int module);
 
 	// In the following, the `channel` arg is a zero-based flat 1D index between 0
 	// and 11. At a lower level, channels are driven by PWMs modules, each module

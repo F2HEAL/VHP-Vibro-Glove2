@@ -62,7 +62,6 @@ void setup() {
 
 }
 
-
 void SetSilence() {
   for(uint32_t i=0; i < 8; i++) {
     g_silence[i] = g_volume * g_settings.vol_amplitude / 100;
@@ -97,7 +96,6 @@ void LowBatteryWarning() {
   // "0" event means that battery voltage is below reference voltage (3.5V)
   // "1" event means above.
 }
-
 
 void OnBleEvent() {
   switch (BleCom.event()) {
