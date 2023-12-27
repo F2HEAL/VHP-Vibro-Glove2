@@ -58,3 +58,7 @@ These parameters are defined and documented in [SStream.hpp](VHP-Vibro-Glove2/SS
 
 
 **Warning:** Not all settings make sense. The [settings.ods](settings.ods) spreadsheet can be used to verify your settings.
+
+Current used settings preset :
+
+![image](https://github.com/F2HEAL/VHP-Vibro-Glove2/blob/main/doc/settings%20presets%20001.jpg)
