@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-
 #ifndef SETTINGS_HPP_
 #define SETTINGS_HPP_
+
+#include <stdint.h>
+
 
 /**
  * Default settings.

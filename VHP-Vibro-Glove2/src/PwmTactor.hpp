@@ -16,8 +16,7 @@
 // Arduino-compatible PWM playback library for the sleeve using the HAL layer.
 //
 // This library could be used for Linear Resonant Actuators (LRA) or voice
-// coils. Pwm is passed through a second-order passive low pass filter with
-// around 700 Hz cut off.
+// coils. 
 //
 // This filtered signal is passed as single-ended input to MAX98306 audio
 // amplifiers. The class-D amplifier output is connected to the tactors.
@@ -27,8 +26,8 @@
 // The sleeve uses 6 audio amplifiers and a total of 12 PWM channels.
 // There are 3 PWM modules. Each module has 4 channels.
 // The values in each channel can be set independently.
-// The PWM uses: 1.5 kB of RAM with 64 PWM values for each channel (3 module * 4
-// channels * 64 values * 2 byte each value)
+// The PWM uses: 192B of RAM with 8 PWM values for each channel (3 module * 4
+// channels * 8 values * 2 byte each value)
 //
 // An example snippet for initialization steps are are as following:
 // SleeveTactors.Initialize();
@@ -102,7 +101,7 @@ namespace audio_tactile {
     public:
 	enum {
 	    kTopValue = 512,   // Individual PWM values can't be above this number.
-	    kUpsamplingFactor = 8,
+	    kUpsamplingFactor = 0,
 	};
 
 	// Pins on port 1 are always offset by 32. For example pin 7 (P1.07) is 39.
@@ -173,77 +172,6 @@ namespace audio_tactile {
 	    NVIC_SetPriority(PWM2_IRQn, kIrqPriority);
 	    NVIC_EnableIRQ(PWM2_IRQn);
 	}
-    
-
-	// Upsampling. Each PWM value can be repeated multiple times.
-	// 0 means each pwm value is played once, For example, 1,2,3,4
-	// 1 means each pwm value is repeated once. For example, 1,1,2,2,3,3,4,4.
-	void SetUpsamplingFactor(uint32_t upsampling_factor) {
-	    // Subtract 1, since when refresh is at 0, 1 cycle is repeated.
-	    // Refresh of 1, actually means 2 cycles.
-	    nrf_pwm_seq_refresh_set(NRF_PWM0, 0, upsampling_factor - 1);
-	    nrf_pwm_seq_refresh_set(NRF_PWM1, 0, upsampling_factor - 1);
-	    nrf_pwm_seq_refresh_set(NRF_PWM2, 0, upsampling_factor - 1);
-	}
-
-
-	// Stop the callbacks, disables the PWM.
-	void DisablePwm() {
-	    nrf_pwm_disable(NRF_PWM0);
-	    nrf_pwm_disable(NRF_PWM1);
-	    nrf_pwm_disable(NRF_PWM2);
-	    NVIC_DisableIRQ(PWM0_IRQn);
-	    NVIC_DisableIRQ(PWM1_IRQn);
-	    NVIC_DisableIRQ(PWM2_IRQn);
-	}
-
-
-	// Start the callbacks, enable the PWM. Both amplifiers and PWM needs to be
-	// enabled to produce output to tactors.
-	void EnablePwm() {
-	    nrf_pwm_enable(NRF_PWM0);
-	    nrf_pwm_enable(NRF_PWM1);
-	    nrf_pwm_enable(NRF_PWM2);
-	    NVIC_EnableIRQ(PWM0_IRQn);
-	    NVIC_EnableIRQ(PWM1_IRQn);
-	    NVIC_EnableIRQ(PWM2_IRQn);
-	}
-
-
-	// Disable all audio amplifiers with a hardware pin. The pwm remains
-	// functional.
-	void DisableAmplifiers() {
-	    nrf_gpio_pin_write(kAmpEnablePin1, 0);
-	    nrf_gpio_pin_write(kAmpEnablePin2, 0);
-	    nrf_gpio_pin_write(kAmpEnablePin3, 0);
-	    nrf_gpio_pin_write(kAmpEnablePin4, 0);
-	    nrf_gpio_pin_write(kAmpEnablePin5, 0);
-	    nrf_gpio_pin_write(kAmpEnablePin6, 0);
-	}
-
-
-	// Enable all audio amplifiers with a hardware pin.
-	void EnableAmplifiers() {
-	    nrf_gpio_pin_write(kAmpEnablePin1, 1);
-	    nrf_gpio_pin_write(kAmpEnablePin2, 1);
-	    nrf_gpio_pin_write(kAmpEnablePin3, 1);
-	    nrf_gpio_pin_write(kAmpEnablePin4, 1);
-	    nrf_gpio_pin_write(kAmpEnablePin5, 1);
-	    nrf_gpio_pin_write(kAmpEnablePin6, 1);
-	}
-
-
-	// Start the continuous playback.
-	void StartPlayback() {
-	    // Warning: issue only in Arduino. When using StartPlayback() it crashes.
-	    // Looks like NRF_PWM0 module is automatically triggered, and triggering it
-	    // again here crashes ISR. Temporary fix is to only use nrf_pwm_task_trigger
-	    // for NRF_PWM1 and NRF_PWM2. To fix might need a nRF52 driver update.
-	    nrf_pwm_task_trigger(NRF_PWM0, NRF_PWM_TASK_SEQSTART0);
-	    nrf_pwm_task_trigger(NRF_PWM1, NRF_PWM_TASK_SEQSTART0);
-	    nrf_pwm_task_trigger(NRF_PWM2, NRF_PWM_TASK_SEQSTART0);
-	}
-
 
 	// In the following, the `channel` arg is a zero-based flat 1D index between 0
 	// and 11. At a lower level, channels are driven by PWMs modules, each module
@@ -266,71 +194,11 @@ namespace audio_tactile {
 	//         10                     (2, 2)              11
 	//         11                     (2, 3)              12
 
-	// Sets values of specific channel to zeros, so there is nothing to play.
-	void SilenceChannel(int channel) {
+	// Sets values of specific channel to volume, so there is nothing to play.
+	void SilenceChannel(int channel, uint16_t volume) {
 	    uint16_t* dest = GetChannelPointer(channel);
 	    for (int i = 0; i < kNumPwmValues; ++i) {
-		dest[i * kChannelsPerModule] = 0;
-	    }
-	}
-
-
-	// Copies new PWM only to a specific channel.
-	void UpdateChannel(int channel, const uint16_t* data) {
-	    uint16_t* dest = GetChannelPointer(channel);
-	    for (int i = 0; i < kNumPwmValues; ++i) {
-		dest[i * kChannelsPerModule] = data[i];
-	    }
-	}
-
-
-	// Same as above, but converts from from float samples in the [-1, 1] range.
-	void UpdateChannel(int channel, const float* data) {
-	    uint16_t* dest = GetChannelPointer(channel);
-	    for (int i = 0; i < kNumPwmValues; ++i) {
-		dest[i * kChannelsPerModule] = FloatToPwmSample(data[i]);
-	    }
-	}
-
-
-	// Sets the PWM samples for a specified channel as
-	//
-	//   ith sample = FloatToPwmSample(gain * data[i * stride])
-	//
-	// for i = 0, 1, ..., kNumPwmValues - 1. The `stride` is the number of
-	// elements between successive reads. No clipping is done.
-	void UpdateChannelWithGain(int channel, float gain, const float* data,
-				   int stride = 1) {
-	    uint16_t* dest = GetChannelPointer(channel);
-	    const float scale = 0.5f * kTopValue * gain;
-	    const float offset = 0.5f * kTopValue + 0.5f;
-	    for (int i = 0; i < kNumPwmValues; ++i, data += stride) {
-		dest[i * kChannelsPerModule] =
-		    static_cast<uint16_t>(scale * (*data) + offset);
-	    }
-	}
-
-
-	// Update all 12 channels.
-	// The data array is a byte array. The size is 96 bytes.
-	// The samples are in interleaved format:
-	//   output[c + kNumChannel * n] = nth sample for channels
-	// The order is as following. Tactor: (PWM module, PWM channel).
-	//  1: (0, 0)    7: (1, 2)
-	//  2: (0, 1)    8: (1, 3)
-	//  3: (0, 2)    9: (2, 0)
-	//  4: (0, 3)    10: (2, 1)
-	//  5: (1, 0)    11: (2, 2)
-	//  6: (1, 1)    12: (2, 3)
-	void UpdatePwmAllChannelsByte(const uint8_t* data) {
-	    uint16_t pwm_channel[kNumPwmValues];
-
-	    for (int c = 0; c < kNumTotalPwm; ++c) {
-		for (int i = 0, j = c; i < kNumPwmValues; ++i, j += kNumTotalPwm) {
-		    // Scale byte value in [0, 255] to 9-bit value in [0, 510].
-		    pwm_channel[i] = 2 * data[j];
-		}
-		UpdateChannel(c, pwm_channel);
+		dest[i * kChannelsPerModule] = volume;
 	    }
 	}
 
@@ -341,21 +209,16 @@ namespace audio_tactile {
 	}
 
 
-	// Returns which PWM module triggered the interrupt.
-	// 0 - module PWM0.
-	// 1 - module PWM1.
-	// 2 - module PWM2.
-	uint8_t GetEvent()  { return get_pwm_event(); }
-
-	// Converts a float to a value pwm can undestand (uint16_t between 0 and
-	// kPwmTopValue).
-	uint16_t FloatToPwmSample(float sample) {
-	    constexpr float kScale = 0.5f * kTopValue;
-	    constexpr float kOffset = kScale + 0.5f;
-	    return static_cast<uint16_t>(kScale * sample + kOffset);
+	// Gets pointer to the start of `channel` in pwm_buffer_.
+	uint16_t* GetChannelPointer(int orig_channel) {
+	    const auto channel = order_pairs[orig_channel];
+	    
+	    return pwm_buffer_ +
+		kSamplesPerModule * (channel / kChannelsPerModule) +
+		(channel % kChannelsPerModule);
 	}
 
-
+	
     private:
 	enum {
 	    kIrqPriority = 7,  // Lowest priority.
@@ -393,13 +256,16 @@ namespace audio_tactile {
 	    nrf_pwm_int_enable(pwm_module, NRF_PWM_INT_SEQEND0_MASK);
 	}
 
-
-	// Gets pointer to the start of `channel` in pwm_buffer_.
-	uint16_t* GetChannelPointer(int channel) {
-	    return pwm_buffer_ +
-		kSamplesPerModule * (channel / kChannelsPerModule) +
-		(channel % kChannelsPerModule);
+	// Enable all audio amplifiers with a hardware pin.
+	void EnableAmplifiers() {
+	    nrf_gpio_pin_write(kAmpEnablePin1, 1);
+	    nrf_gpio_pin_write(kAmpEnablePin2, 1);
+	    nrf_gpio_pin_write(kAmpEnablePin3, 1);
+	    nrf_gpio_pin_write(kAmpEnablePin4, 1);
+	    nrf_gpio_pin_write(kAmpEnablePin5, 1);
+	    nrf_gpio_pin_write(kAmpEnablePin6, 1);
 	}
+
 
 	// Playback buffer.
 	// In "individual" decoder mode, buffer represents 4 channels:

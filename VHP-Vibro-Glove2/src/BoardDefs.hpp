@@ -1,5 +1,9 @@
+#include <stdint.h>
+
 #ifndef BOARDDEFS_HPP_
 #define BOARDDEFS_HPP_
+
+
 
 #define kLedPinBlue 45
 #define kLedPinGreen 36
@@ -9,6 +13,14 @@
 #define kPdmDataPin 7
 #define kPdmSelectPin 26
 #define kTactileSwitchPin 34
+
+
+// Output sequence for board Apollo84 hardware
+//int order_pairs[8] = {0, 3, 4, 5, 11, 9, 8, 6};
+
+// Output sequence for Godef Hardware
+const uint16_t order_pairs[8] = {4, 5, 6, 7, 8, 9, 10, 11}; 
+
 
 namespace audio_tactile {
 
@@ -25,10 +37,6 @@ namespace audio_tactile {
 
     // Constants for mic input selection.
     enum class InputSelection { kAnalogMic, kPdmMic };
-
-    
-
-
     
 }  // namespace audio_tactile
 
