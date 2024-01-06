@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 #include <stdint.h>
+#include <array>
+#include <numeric>
+#include <algorithm>
 
 #include "SampleCache.hpp"
 
@@ -58,28 +61,31 @@ public:
 	    chan8_(chan8), samplerate_(samplerate), stimfreq_(stimfreq), stimduration_(stimduration),
 	    cycleperiod_(cycleperiod), pauzecycleperiod_(pauzecycleperiod), pauzedcycles_(pauzedcycles),
 	    max_jitter_(jitter * cycleperiod_ / channels() / 1000),
-	    samples_per_frame_(8), test_mode_(test_mode),
-	    sample_cache_(samplerate, stimfreq, volume)
+	    volume_(volume),
+	    test_mode_(test_mode),
+	    sample_cache_(samplerate, stimfreq)
 	{
 	    randomSeed(micros());
 	    
-	    for(uint16_t i=0; i < 8; i++) 
-		channel_order_[i] = i;
+	    std::iota(channel_order_.begin(), channel_order_.end(), 0);
 
 	    if(!test_mode_)
 		shuffle_channel_order_();
 	    
-	    
 	    if(max_jitter_ > 0)
 		calc_channel_jitter_();
-	    
 	}
 private:
+    constexpr static size_t max_channels = 8;
+    
     // internal state
     uint32_t frame_counter_;
     uint32_t cycle_counter_;
-    uint32_t channel_order_[8];
-    int32_t channel_jitter_[8];
+    //uint32_t channel_order_[8];
+    std::array<uint32_t, max_channels> channel_order_;
+    
+    //int32_t channel_jitter_[8];
+    std::array<int32_t, max_channels> channel_jitter_;
     
     
     // set by constructor
@@ -91,7 +97,8 @@ private:
     const uint32_t pauzecycleperiod_;
     const uint32_t pauzedcycles_;
     const uint32_t max_jitter_;
-    const uint32_t samples_per_frame_;
+    const uint32_t volume_;
+    constexpr static uint32_t samples_per_frame_ = 8;
     const bool test_mode_;
     
     const SampleCache sample_cache_;
@@ -147,6 +154,15 @@ public:
      * @return Total number of unique active channels
      */
     uint32_t channels() const { return chan8_ ? 8 : 4; }
+
+
+    uint32_t current_active_channel() const {
+	if(cycle_is_pauzed_())
+	    return UINT32_MAX;
+
+	return active_channel_(frame_counter_ * samples_per_frame_);
+    }
+	
     
     /**
      * Advances internal state to the next sample frame
@@ -157,11 +173,13 @@ public:
 	if(frame_counter_  > samples_per_cycle_() / samples_per_frame_) {
 	    frame_counter_ = 0;
 
-	    if(!test_mode_)
-		shuffle_channel_order_();
+	    if(!cycle_is_pauzed_()) {	
+		if(!test_mode_)
+		    shuffle_channel_order_();
 
-	    if(max_jitter_ > 0)
-		calc_channel_jitter_();
+		if(max_jitter_ > 0)
+		    calc_channel_jitter_();
+	    }
 
 	    cycle_counter_++;
 	    if(cycle_counter_ >= pauzecycleperiod_)
@@ -178,16 +196,31 @@ public:
      * @return pointer to array holding samples_per_frame_ values
      */
 
+
+    enum {
+	kChannelsPerModule = 4
+    };
     
-    const uint16_t* chan_samples(uint32_t chan) {
-	const int32_t frame_first_sample = frame_counter_ * samples_per_frame_ - channel_jitter_[chan % channels()];
-	if(frame_first_sample < 0 || cycle_is_pauzed_() || !channel_is_playing_(frame_first_sample, chan % channels())) 
-	    return sample_cache_.silence_;
-	else 
-	    return sample_cache_.cache_ + frame_first_sample % samples_per_stimperiod_();
+    void set_chan_samples(uint16_t* dest, uint32_t chan) const {
+	const int32_t first_sample = (int32_t) ((frame_counter_ * samples_per_frame_)
+						% (samples_per_cycle_() / channels()))  - channel_jitter_[chan];
+
+	if(first_sample < 0 ||
+	   first_sample > (int32_t) (stimduration_ * samplerate_ / 1000))
+	    set_silence_(dest);
+	else {
+	    auto base = first_sample % (samplerate_ / stimfreq_);
+	    for(unsigned i=0; i < samples_per_frame_; i++)
+		dest[i*kChannelsPerModule]= sample_cache_.get_sample(base + i, volume_);
+	}
+    }
+private:
+
+    void set_silence_(uint16_t* dest) const {
+	for(unsigned i=0; i < samples_per_frame_; i++)
+	    dest[i*kChannelsPerModule]=volume_; // play silence
     }
 
-private:
     
     /**    
      * Shuffles the values in channel_order_ in such a way that the value
@@ -195,6 +228,7 @@ private:
      * same channel consecutively)
      */    
     void shuffle_channel_order_() {
+
 	int rj = random(channels() - 1);
 	uint32_t tmp = channel_order_[rj];
 	channel_order_[rj] = channel_order_[0];
@@ -207,6 +241,7 @@ private:
 	    channel_order_[i] = channel_order_[i+rj];
 	    channel_order_[i+rj] = tmp;
 	}
+
     }
 
 
@@ -225,8 +260,7 @@ private:
      */
     
     void calc_channel_jitter_() {
-	for(uint16_t i=0; i<channels(); i++)  
-	    channel_jitter_[i] = random(max_jitter_);
+	std::generate(channel_jitter_.begin(), channel_jitter_.end(), [this]() { return random(max_jitter_); });
     }
 	
 };

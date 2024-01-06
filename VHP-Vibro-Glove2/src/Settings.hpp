@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-
 #ifndef SETTINGS_HPP_
 #define SETTINGS_HPP_
+
+#include <stdint.h>
+
+constexpr char name[] = "F2Heal VHP";
+constexpr char version[] = "1.0.0";
 
 /**
  * Default settings.
@@ -41,6 +45,7 @@ struct Settings {
 
   
 } g_settings;
+
 
 #endif
 

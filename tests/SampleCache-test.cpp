@@ -5,7 +5,7 @@
 
 using namespace std;
 
-#include "VHP-Vibro-Glove2/SampleCache.hpp"
+#include "VHP-Vibro-Glove2/src/SampleCache.hpp"
 
 int main() 
 {
