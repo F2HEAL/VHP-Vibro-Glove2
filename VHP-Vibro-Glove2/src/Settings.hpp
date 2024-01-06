@@ -5,6 +5,8 @@
 
 #include <stdint.h>
 
+constexpr char name[] = "F2Heal VHP";
+constexpr char version[] = "1.0.0";
 
 /**
  * Default settings.
@@ -43,6 +45,7 @@ struct Settings {
 
   
 } g_settings;
+
 
 #endif
 
