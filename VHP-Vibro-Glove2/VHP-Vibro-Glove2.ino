@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 #include "src/PwmTactor.hpp"
 #include "src/BatteryMonitor.hpp"
-#include "src/UI.hpp"
-
 
 
 #include "src/BleComm.hpp"
@@ -41,9 +39,11 @@ void setup() {
     BleCom.Init("F2Heal VHP", OnBleEvent);
     
     SetSilence();
-    
-    DeviceUi.Initialize(kTactileSwitchPin);
-    DeviceUi.OnUiEventListener(ToggleStream);
+
+    // Configure button to toggle stream
+    // Set pin as inputs with an internal pullup.
+    nrf_gpio_cfg_input(kTactileSwitchPin, NRF_GPIO_PIN_PULLUP);
+    attachInterrupt(kTactileSwitchPin_nrf, ToggleStream, RISING);
     
     nrf_gpio_pin_clear(kLedPinBlue);
     nrf_gpio_pin_clear(kLedPinGreen);  

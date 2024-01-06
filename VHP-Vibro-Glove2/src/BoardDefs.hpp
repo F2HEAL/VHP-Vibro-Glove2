@@ -3,8 +3,6 @@
 #ifndef BOARDDEFS_HPP_
 #define BOARDDEFS_HPP_
 
-
-
 #define kLedPinBlue 45
 #define kLedPinGreen 36
 #define kThermistorPin 3
@@ -13,6 +11,11 @@
 #define kPdmDataPin 7
 #define kPdmSelectPin 26
 #define kTactileSwitchPin 34
+
+//With the upgrade to adafruit:nrf52 1.6.0 the existing approach via
+//UI.hpp no longer worked. It is replaced by a call to attachInterrupt
+//from the NRF SDK. 
+#define kTactileSwitchPin_nrf 7 
 
 
 // Output sequence for board Apollo84 hardware
