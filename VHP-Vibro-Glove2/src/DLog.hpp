@@ -17,9 +17,8 @@ private:
     std::array<uint16_t, channels_> sample_count_;    
     
 public:
-    DLog()  {
-	reset();
-    }
+    DLog() : logs_({{0.0}}), sample_count_({0}) { }
+	
 
     void reset() {
 	sample_count_.fill(0);

@@ -102,14 +102,14 @@ void OnPwmSequenceEnd() {
 
 
 void loop() {
-    static int counter = 0;
+    static unsigned counter = 0;
     
     while(!Serial); // wait for serial port to be ready
     Serial.print("***** Test run #");
     Serial.println(++counter);
     
     ToggleStream(); // start stream for measurement
-    delay(8000);
+    delay(8100);
     ToggleStream(); // stop stream
 
     g_dlog.serial_print();
