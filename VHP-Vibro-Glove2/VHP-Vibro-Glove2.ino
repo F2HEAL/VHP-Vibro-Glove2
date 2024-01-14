@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
+
+#include "src/Max14661.hpp"
+#include "src/DLog.hpp"
+
 #include "src/PwmTactor.hpp"
-#include "src/BatteryMonitor.hpp"
 
 
 #include "src/BleComm.hpp"
@@ -22,6 +25,11 @@ void setup() {
     nrf_gpio_cfg_output(kLedPinBlue);
     nrf_gpio_cfg_output(kLedPinGreen);  
     nrf_gpio_pin_set(kLedPinBlue);
+
+    nrf_gpio_cfg_output(kCurrentAmpEnable);
+    nrf_gpio_pin_write(kCurrentAmpEnable, 0);
+    Multiplexer.Initialize();    
+
     
     PwmTactor.OnSequenceEnd(OnPwmSequenceEnd);
     PwmTactor.Initialize();
@@ -33,9 +41,6 @@ void setup() {
     nrf_pwm_task_trigger(NRF_PWM1, NRF_PWM_TASK_SEQSTART0);
     nrf_pwm_task_trigger(NRF_PWM2, NRF_PWM_TASK_SEQSTART0);
     
-    PuckBatteryMonitor.InitializeLowVoltageInterrupt();
-    PuckBatteryMonitor.OnLowBatteryEventListener(LowBatteryWarning);
-
     BleCom.Init("F2Heal VHP", OnBleEvent);
     
     SetSilence();
@@ -57,6 +62,8 @@ void SetSilence() {
     g_volume_lvl = g_volume * g_settings.vol_amplitude / 100;
 }
 
+uint32_t measuring_channel = UINT32_MAX;
+
 void OnPwmSequenceEnd() {
     if(g_running) {
 	g_stream->next_sample_frame();
@@ -70,28 +77,46 @@ void OnPwmSequenceEnd() {
 	    } else {
 		PwmTactor.SilenceChannel(channel, g_volume_lvl);		
 	    }
+	
+	if(active_channel != measuring_channel) {
+	    //Channel has changed, change multiplexer
+	    measuring_channel = active_channel;
+	    
+	    // Serial.print(micros());
+	    // Serial.print("  C:");
+	    // Serial.println(measuring_channel);
+	    Multiplexer.ConnectChannel(order_pairs[measuring_channel]);	    
+	} else {
+	    // record the reading for this channel
+	    const float adc_value = analogRead(A6);
+	    //g_csense->record(i, adc_value);
+	    g_dlog.log(active_channel, adc_value);		    
+	}
     } else {
 	for(uint32_t i = 0; i < g_settings.default_channels; i++)
 	    PwmTactor.SilenceChannel(i, g_volume_lvl);
     }    
 }
 
+
+
+
 void loop() {
-    // Output battery voltage via serial (debugging)
-    uint16_t battery = PuckBatteryMonitor.MeasureBatteryVoltage();
-    float converted = PuckBatteryMonitor.ConvertBatteryVoltageToFloat(battery);
-    Serial.print("Battery voltage: ");
-    Serial.println(converted);
-    delay(120000);
+    static int counter = 0;
+    
+    while(!Serial); // wait for serial port to be ready
+    Serial.print("***** Test run #");
+    Serial.println(++counter);
+    
+    ToggleStream(); // start stream for measurement
+    delay(8000);
+    ToggleStream(); // stop stream
+
+    g_dlog.serial_print();
+    g_dlog.reset();
+    delay(1000);
 }
 
-void LowBatteryWarning() {
-    nrf_gpio_pin_set(kLedPinBlue);  
-    Serial.print("Low voltage trigger: ");
-    Serial.println(PuckBatteryMonitor.GetEvent());
-    // "0" event means that battery voltage is below reference voltage (3.5V)
-    // "1" event means above.
-}
 
 void OnBleEvent() {
     switch (BleCom.event()) {
@@ -143,8 +168,12 @@ void ToggleStream() {
 
 void SendStatus() {
     Serial.println("Message: GetStatus.");
-    uint16_t battery_voltage_uint16 = PuckBatteryMonitor.MeasureBatteryVoltage();
-    float battery_voltage_float = PuckBatteryMonitor.ConvertBatteryVoltageToFloat(battery_voltage_uint16);
+    //uint16_t battery_voltage_uint16 =
+    //PuckBatteryMonitor.MeasureBatteryVoltage();
+    
+    //float battery_voltage_float =
+    //PuckBatteryMonitor.ConvertBatteryVoltageToFloat(battery_voltage_uint16);
+    float battery_voltage_float = 0.0;
     
     uint64_t running_period = 0;
     if(g_running) {

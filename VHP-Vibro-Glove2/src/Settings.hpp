@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 constexpr char name[] = "F2Heal VHP";
-constexpr char version[] = "1.0.0";
+constexpr char version[] = "1.0.0-currenttest";
 
 /**
  * Default settings.
@@ -33,14 +33,14 @@ struct Settings {
    */
   bool chan8 = true;
   uint32_t samplerate = 46875;
-  uint32_t stimfreq = 250;
-  uint32_t stimduration = 100;
-  uint32_t cycleperiod = 1332;
-  uint32_t pauzecycleperiod = 5;
-  uint32_t pauzedcycles = 2;;
+  uint32_t stimfreq = 32;
+  uint32_t stimduration = 1000;
+  uint32_t cycleperiod = 8000;
+  uint32_t pauzecycleperiod = 3;
+  uint32_t pauzedcycles = 2;
   uint16_t jitter = 235;
   uint32_t vol_amplitude = 278;
-  bool test_mode = false;
+  bool test_mode = true;
 
 
   
