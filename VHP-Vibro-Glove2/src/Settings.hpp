@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 constexpr char name[] = "F2Heal VHP";
-constexpr char version[] = "1.0.0";
+constexpr char version[] = "1.0.1";
 
 /**
  * Default settings.
