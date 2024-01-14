@@ -5,6 +5,7 @@ This project documents the F2Heal Open Source design for Vibrotactile Coordinate
 # Contents
 1. [Hardware](doc/Hardware.md)
 2. [Software](doc/Software.md)
+    * [Change log](CHANGELOG.md)
 3. [Usage](doc/Usage.md)
 
 ![image](https://github.com/F2HEAL/VHP-Vibro-Glove2/assets/18469570/6d37423f-a8d8-489d-8761-dce0398e5a9a)

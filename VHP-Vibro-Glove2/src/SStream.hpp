@@ -170,8 +170,12 @@ public:
     void next_sample_frame() {
 	frame_counter_++;
 
-	if(frame_counter_  > samples_per_cycle_() / samples_per_frame_) {
+	if(frame_counter_  >= samples_per_cycle_() / samples_per_frame_) {
 	    frame_counter_ = 0;
+
+	    cycle_counter_++;
+	    if(cycle_counter_ >= pauzecycleperiod_)
+		cycle_counter_ = 0;
 
 	    if(!cycle_is_pauzed_()) {	
 		if(!test_mode_)
@@ -180,11 +184,6 @@ public:
 		if(max_jitter_ > 0)
 		    calc_channel_jitter_();
 	    }
-
-	    cycle_counter_++;
-	    if(cycle_counter_ >= pauzecycleperiod_)
-		cycle_counter_ = 0;
-	    
 	}
     }
 

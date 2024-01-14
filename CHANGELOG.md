@@ -1,5 +1,11 @@
 # Change log
 
+## 1.0.1 - 2024-01-14
+
+Bugfix release, upgrade advised.
+
+* bugfix next_sample_frame()
+
 ## 1.0.0 - 2024-01-06
 
 * Rewrite of synthesis core, avoiding glithes in generated waves
