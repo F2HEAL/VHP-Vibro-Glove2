@@ -2,6 +2,10 @@
 
 This project documents the F2Heal Open Source design for Vibrotactile Coordinated Reset (vCR) Gloves. With this information, you should be able to build and use this device. A [short introduction video](https://youtu.be/0L4k3rwZa5U) made by one of our team members.
 
+# !!Note!!
+
+This is a experimental release for 'current-sensing'. It is intended for measurements and testing purposes only, not for normal use.
+
 # Contents
 1. [Hardware](doc/Hardware.md)
 2. [Software](doc/Software.md)
