@@ -10,7 +10,7 @@ Bugfix release, upgrade advised.
 
 * Rewrite of synthesis core, avoiding glithes in generated waves
 * Removed dependency on audio-to-tactile library
-* Made compatibility with adafruit:nrf52 1.6.0
+* Ensure compatibility with adafruit:nrf52 1.6.0
 * Removed UI.hpp
 
 
