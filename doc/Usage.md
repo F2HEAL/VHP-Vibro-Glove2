@@ -57,8 +57,8 @@ These parameters are defined and documented in [SStream.hpp](VHP-Vibro-Glove2/SS
 * Jitter 23.5% : This is 23.5% of 1332ms / 8 or 39.1ms, so well below the 66.5ms of silence calculated above
 
 
-**Warning:** Not all settings make sense. The [settings.ods](settings.ods) spreadsheet can be used to verify your settings.
+**Warning:** Not all settings make sense. The [settings2.ods](settings2.ods) spreadsheet can be used to verify your settings.
 
 Current used settings preset :
 
-![image](https://github.com/F2HEAL/VHP-Vibro-Glove2/blob/main/doc/settings%20presets%20001.jpg)
+![image](https://github.com/F2HEAL/VHP-Vibro-Glove2/blob/main/doc/settings%20presets%20002.jpg)
