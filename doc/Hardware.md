@@ -8,7 +8,7 @@ It's not commercially available it this form and needs to be produced from the s
 
 # Components
 
-The rest of the components needed can be found in the [BOM](doc/BOM). 
+The rest of the components needed can be found in the [BOM](BOM). 
 
 ![image](https://github.com/F2HEAL/VHP-Vibro-Glove2/assets/18469570/78e032f1-99f6-40ed-86ab-5e5dde163579)
 
