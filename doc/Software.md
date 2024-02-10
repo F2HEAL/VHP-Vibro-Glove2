@@ -8,7 +8,7 @@ The software can be built in two ways:
 
 ### Arduino IDE/CLI
 
-Follow [these instructions](https://github.com/F2HEAL/VHP-Vibro-Glove/blob/main/README.md) to prepare your Arduino environment.
+Follow [these instructions](Software-Installation.md) to prepare your Arduino environment.
 
 Afterwards, you should be able to compile and upload the sketch in [VHP-Vibro-Glove](/VHP-Vibro-Glove2)
 
