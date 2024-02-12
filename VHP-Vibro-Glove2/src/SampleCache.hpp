@@ -14,7 +14,7 @@
  * The main constraint here is to generate the next 8 samples fast
  * enough given the current sampling rate.  From the different methods
  * I've benchmarked, this one turned out to be the fastest (on the ARM
- * Cortex M4 architecture). Its fast enough because it avoids lots of
+ * nrf52840 architecture). Its fast enough because it avoids lots of
  * arithmetics (and specifically divisions) during the sample
  * computation.
  */
