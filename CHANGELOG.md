@@ -1,5 +1,10 @@
 # Change log
 
+## 1.1.0 - 2024-02-16
+
+* Change to channel shuffle so that consecutive stimulation of the
+  same channel becomes possible (F2Heal meeting 2024-02-11)
+
 ## 1.0.1 - 2024-01-14
 
 Bugfix release, upgrade advised.

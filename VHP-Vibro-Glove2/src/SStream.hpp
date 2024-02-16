@@ -221,26 +221,29 @@ private:
     }
 
     
-    /**    
-     * Shuffles the values in channel_order_ in such a way that the value
-     * of the last element differs from the first (to avoid activating the
-     * same channel consecutively)
+    /**    		
+     *  Randomize channel order
      */    
     void shuffle_channel_order_() {
 
-	int rj = random(channels() - 1);
-	uint32_t tmp = channel_order_[rj];
-	channel_order_[rj] = channel_order_[0];
-	channel_order_[0] = tmp;
-    
-	for(uint16_t i=1; i<channels() - 1; i++) {
-	    rj = random(channels() - i);
-	    uint32_t tmp = channel_order_[i];
+	struct RandInt {
+	    using result_type = uint32_t;
 
-	    channel_order_[i] = channel_order_[i+rj];
-	    channel_order_[i+rj] = tmp;
-	}
-
+	    static constexpr result_type min()  {
+		return 0;
+	    }
+	    
+	    static constexpr result_type max() {
+		return UINT32_MAX-1;
+	    }
+	    
+	    result_type operator()() {
+		return random(UINT32_MAX);
+	    }
+	};
+	
+	
+	std::shuffle(channel_order_.begin(), channel_order_.end(), RandInt());
     }
 
 
