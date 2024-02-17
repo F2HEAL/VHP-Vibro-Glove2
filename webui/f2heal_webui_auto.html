@@ -103,20 +103,10 @@
 	  var ExtraPause = 0.1 * (CycleMin + JitterPauseNeeded);
 	  var CyclePeriod = Math.round(CycleMin + JitterPauseNeeded + ExtraPause);
 
-	  console.log("CalcStimFreqStimDur() : FreqVal = ", FreqVal,
-		      "StimDurPerLen = ", StimDurPerLen,
-		      "CycleMin = ", CycleMin,
-		      "JitterPauseNeeded = ", JitterPauseNeeded,
-		      "ExtraPause = ", ExtraPause,
-		      
-		      "StimDur = ", StimDur, "CyclePeriod = ", CyclePeriod);
-
 	  
 	  document.getElementById("s_cycleperiod").value = CyclePeriod;
-	  console.log("here");
 	  sleepFor(250);	  
 	  bleInstance.setMessageUInt32(MESSAGE_TYPE_CYCLE_PERIOD, CyclePeriod);
-	  console.log("here2");	  
 	  document.getElementById("s_stimdur").value = StimDur;
 	  sleepFor(250);
 	  bleInstance.setMessageUInt32(MESSAGE_TYPE_STIM_DURATION, StimDur);	  
@@ -164,7 +154,6 @@
       * Updates UI elements after starting / stopping streaming.
       */
       function updateStreamConnectionState() {
-	  console.log("Debug: updateStreamConnectionState");
 	  document.getElementById('a_running').checked = bleInstance.a_running;
 	  document.getElementById('a_runningsince').value = msToTime(Number(bleInstance.a_runningsince));
 	  document.getElementById('a_battery').value = bleInstance.a_battery;
@@ -199,7 +188,6 @@
        *    is currently connected.
        */
        function updateBLEConnectionState() {
-	  console.log("Debug: updateBLEConnectionState");    
 	  if (bleInstance.connected) {
 	      document.getElementById('clientConnectButton').innerHTML = 'Disconnect';
 	      document.getElementById('toggleStream').disabled = false;
@@ -218,7 +206,6 @@
        * On receive settings batch from BLE, parse and update UI elements.
        */
        function updateFromSettingsBatch() {
-	  console.log("Debug: updateSettingsFromBatch");        
 	   document.getElementById('s_chan8').checked = bleInstance.s_chan8;
 	   document.getElementById('s_stimfreq').value = bleInstance.s_stimfreq;
 	   document.getElementById('s_stimdur').value = bleInstance.s_stimduration;
