@@ -48,23 +48,40 @@
 	<label for="s_chan8">Channel 8</label>
 	<input id="s_chan8"    type="checkbox" onchange="bleInstance.setMessageBool(MESSAGE_TYPE_8_CHANNEL, this.checked); CalcStimFreqStimDur();" disabled="false"><br>
 
-	<label for="s_stimfreq">Stimulation Frequency</label>
-	<input id="s_stimfreq" type="number"  min="0" max="2500" value="0" disabled="false" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_STIM_FREQ, this.value); CalcStimFreqStimDur();"><br>
-
-	<label for="s_stimdur">Stimulaion Duration (auto)</label>
-	<input id="s_stimdur" type="number" min="0" value="0" disabled="false" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_STIM_DURATION,this.value)"><br>
-
-	<label for="s_cycleperiod">Cycle Period (auto)</label>
-	<input id="s_cycleperiod" type="number" min="0" value="0" disabled="false" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_CYCLE_PERIOD,this.value)"><br>
-
-	<label for="s_pauzecycleperiod">Pauze Cycle Period</label>
-	<input id="s_pauzecycleperiod" type="number" min="0" value="0" disabled="false" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_PAUZE_CYCLE_PERIOD,this.value)"><br>
-
-	<label for="s_pauzedcycles">Pauzed Cycles</label>
-	<input id="s_pauzedcycles" type="number" min="0" value="0" disabled="false" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_PAUZED_CYCLES, this.value)"><br>
-
-	<label for="s_jitter">Jitter</label>
-	<input id="s_jitter" type="number" min="0" max="1000" value="0" disabled="false" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_JITTER, this.value); CalcStimFreqStimDur();"><br>
+	<table>
+	  <tr>
+	    <td><label for="s_stimfreq">Stimulation Frequency</label></td>
+	    <td><input id="s_stimfreq" type="number"  min="0" max="2500" value="0" disabled="false" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_STIM_FREQ, this.value); CalcStimFreqStimDur();"></td>
+	  </tr>
+	  <tr>
+	    <td><label for="s_minduration">Min Duration (ms) </label></td>
+	    <td><input id="s_minduration" type="number" min="0" value="100" disabled="false" onchange="CalcStimFreqStimDur();"></td>
+	  </tr>
+	  <tr>
+	    <td><label for="s_mincycles">Min Cycles (#)</label></td>
+	    <td><input id="s_mincycles" type="number" min="0" value="6" disabled="false" onchange="CalcStimFreqStimDur();"></td>
+	  </tr>
+	  <tr>
+	    <td><label for="s_stimdur">Stimulaion Duration (ms) [auto]</label></td>
+	    <td><input id="s_stimdur" type="number" min="0" value="0" disabled="false" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_STIM_DURATION,this.value)"></td>
+	  </tr>
+	  <tr>
+	    <td><label for="s_cycleperiod">Cycle Period (ms) [auto]</label></td>
+	    <td><input id="s_cycleperiod" type="number" min="0" value="0" disabled="false" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_CYCLE_PERIOD,this.value)"></td>
+	  </tr>
+	  <tr>
+	    <td><label for="s_pauzecycleperiod">Pauze Cycle Period (#)</label></td>
+	    <td><input id="s_pauzecycleperiod" type="number" min="0" value="0" disabled="false" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_PAUZE_CYCLE_PERIOD,this.value)"></td>
+	  </tr>
+	  <tr>
+	    <td><label for="s_pauzedcycles">Pauzed Cycles (#)</label></td>
+	    <td><input id="s_pauzedcycles" type="number" min="0" value="0" disabled="false" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_PAUZED_CYCLES, this.value)"></td>
+	  </tr>
+	  <tr>
+	    <td><label for="s_jitter">Jitter (‰)</label></td>
+	    <td><input id="s_jitter" type="number" min="0" max="1000" value="0" disabled="false" onchange="bleInstance.setMessageUInt32(MESSAGE_TYPE_JITTER, this.value); CalcStimFreqStimDur();"></td>
+	  </tr>
+	</table>
 
 	<label for="s_test_mode">Test mode</label>
 	<input id="s_test_mode" type="checkbox" onchange="bleInstance.setMessageBool(MESSAGE_TYPE_TEST_MODE, this.checked)" disabled="false"><br>
@@ -87,21 +104,56 @@
       }
 
       function CalcStimFreqStimDur() {
-	  var FreqVal = document.getElementById("s_stimfreq").value;
-	  var Channels = document.getElementById("s_chan8").checked ? 8 : 4;
-	  var Jitter = document.getElementById("s_jitter").value;
-	  
+	  var SetFreq = document.getElementById("s_stimfreq").value;
+	  var SetChannels = document.getElementById("s_chan8").checked ? 8 : 4;
+	  var SetMinDuration = document.getElementById("s_minduration").value;
+	  var SetMinCycles = document.getElementById("s_mincycles").value;
+	  var SetJitter = document.getElementById("s_jitter").value;
+
+	  // console.log("SetFreq = ", SetFreq,
+	  // 	      "SetChannels = ", SetChannels,
+	  // 	      "SetMinDuration = ", SetMinDuration,
+	  // 	      "SetMinCycles = ", SetMinCycles,
+	  // 	      "SetJitter = ", SetJitter);
+
+
 	  /*
 	   * See :
 	   * https://docs.google.com/spreadsheets/d/1yURsFJlMio4YAgBf3CbpnNnWemVWQylpefqOispBCV4/edit?usp=sharing
+	   * | CalcPulseDuration
 	   */
-	  var StimDurPerLen = Math.round(8.5 + 0.06 * FreqVal)
-	  var StimDur = Math.round(StimDurPerLen * 1000 / FreqVal);
+	  
+	  /* Cut off frequency (Hz) for a given min duration (ms)
+	     Above this frequency the value configured for MinDuration
+	     is used, below the duration is equal to the configure
+	     MinCycles (of the configured SetFreq)
+	   */
+	  var CutOffFreq = Math.round(SetMinCycles * 1000 / SetMinDuration);
 
-	  var CycleMin = Channels * StimDur;
-	  var JitterPauseNeeded = (CycleMin * Jitter) / 1000;
+	  if( SetFreq > CutOffFreq) {
+	      var Cycles = Math.round(SetMinDuration * SetFreq / 1000);
+
+	      var StimDur = Math.round(1000 * Cycles / SetFreq);
+
+	      if (StimDur < SetMinDuration) {
+		  StimDur = Math.round(1000 * (Cycles + 1) / SetFreq);
+	      }
+	  } else {
+	      var StimDur = Math.round(1000 * SetMinCycles / SetFreq);
+	  }
+
+	  var CycleMin = SetChannels * StimDur;
+	  var JitterPauseNeeded = (CycleMin * SetJitter) / 1000;
 	  var ExtraPause = 0.1 * (CycleMin + JitterPauseNeeded);
 	  var CyclePeriod = Math.round(CycleMin + JitterPauseNeeded + ExtraPause);
+
+	  console.log("CalcStimFreqStimDur() : FreqVal = ", SetFreq,
+		      "CutOffFreq = ", CutOffFreq,
+		      "CycleMin = ", CycleMin,
+		      "JitterPauseNeeded = ", JitterPauseNeeded,
+		      "ExtraPause = ", ExtraPause,
+		      
+		      "StimDur = ", StimDur, "CyclePeriod = ", CyclePeriod);
 
 	  
 	  document.getElementById("s_cycleperiod").value = CyclePeriod;
@@ -110,8 +162,7 @@
 	  document.getElementById("s_stimdur").value = StimDur;
 	  sleepFor(250);
 	  bleInstance.setMessageUInt32(MESSAGE_TYPE_STIM_DURATION, StimDur);	  
-      }
-      
+      }      
       
       var logDisplay = document.getElementById('logDisplay');
       var logLines = [];
@@ -154,6 +205,7 @@
       * Updates UI elements after starting / stopping streaming.
       */
       function updateStreamConnectionState() {
+	  console.log("Debug: updateStreamConnectionState");
 	  document.getElementById('a_running').checked = bleInstance.a_running;
 	  document.getElementById('a_runningsince').value = msToTime(Number(bleInstance.a_runningsince));
 	  document.getElementById('a_battery').value = bleInstance.a_battery;
@@ -164,6 +216,8 @@
 	      document.getElementById('s_volume2').disabled = true;
 	      document.getElementById('s_chan8').disabled = true;
 	      document.getElementById('s_stimfreq').disabled = true;
+	      document.getElementById('s_mincycles').disabled = true;
+	      document.getElementById('s_minduration').disabled = true;
 	      document.getElementById('s_pauzecycleperiod').disabled = true;
 	      document.getElementById('s_pauzedcycles').disabled = true;
 	      document.getElementById('s_jitter').disabled = true;
@@ -174,6 +228,8 @@
 	      document.getElementById('s_volume2').disabled = false;
 	      document.getElementById('s_chan8').disabled = false;
 	      document.getElementById('s_stimfreq').disabled = false;
+	      document.getElementById('s_mincycles').disabled = false;
+	      document.getElementById('s_minduration').disabled = false;	      
 	      document.getElementById('s_pauzecycleperiod').disabled = false;
 	      document.getElementById('s_pauzedcycles').disabled = false;
 	      document.getElementById('s_jitter').disabled = false;
@@ -188,6 +244,7 @@
        *    is currently connected.
        */
        function updateBLEConnectionState() {
+	  console.log("Debug: updateBLEConnectionState");    
 	  if (bleInstance.connected) {
 	      document.getElementById('clientConnectButton').innerHTML = 'Disconnect';
 	      document.getElementById('toggleStream').disabled = false;
@@ -206,6 +263,7 @@
        * On receive settings batch from BLE, parse and update UI elements.
        */
        function updateFromSettingsBatch() {
+	  console.log("Debug: updateSettingsFromBatch");        
 	   document.getElementById('s_chan8').checked = bleInstance.s_chan8;
 	   document.getElementById('s_stimfreq').value = bleInstance.s_stimfreq;
 	   document.getElementById('s_stimdur').value = bleInstance.s_stimduration;
