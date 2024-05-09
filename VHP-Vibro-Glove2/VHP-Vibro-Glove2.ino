@@ -22,6 +22,11 @@ void setup() {
     nrf_gpio_cfg_output(kLedPinBlue);
     nrf_gpio_cfg_output(kLedPinGreen);  
     nrf_gpio_pin_set(kLedPinBlue);
+
+    //TTL Pin initialization
+    nrf_gpio_cfg_output(kTTL1Pin);                      //configure kTTL1 pin as output
+    nrf_gpio_cfg_input(kTTL2Pin, NRF_GPIO_PIN_PULLUP);  //configure kTTL2 pin as input
+    nrf_gpio_pin_clear(kTTL1Pin);                       //clear output
     
     PwmTactor.OnSequenceEnd(OnPwmSequenceEnd);
     PwmTactor.Initialize();
@@ -77,12 +82,12 @@ void OnPwmSequenceEnd() {
 }
 
 void loop() {
-    // Output battery voltage via serial (debugging)
-    uint16_t battery = PuckBatteryMonitor.MeasureBatteryVoltage();
-    float converted = PuckBatteryMonitor.ConvertBatteryVoltageToFloat(battery);
-    Serial.print("Battery voltage: ");
-    Serial.println(converted);
-    delay(120000);
+    if(nrf_gpio_pin_read(kTTL2Pin)==0)  //Read GPIO
+        nrf_gpio_pin_clear(kTTL1Pin);   //Turn ON the LED
+    else
+        nrf_gpio_pin_set(kTTL1Pin);   //Turn OFF the LED
+
+    delay(100); //100ms sleep
 }
 
 void LowBatteryWarning() {
