@@ -30,8 +30,8 @@ namespace audio_tactile {
     constexpr int kTactileSwitchPin_nrf = 7 ;
 
     //PINs used for TTL in/out
-    constexpr int kTTL1Pin = 4;
-    constexpr int kTTL2Pin = 5;
+    constexpr int kTTL1Pin = 5;
+    constexpr int kTTL2Pin = 4;
     
     
     // Number of ADC samples per buffer.

@@ -82,12 +82,17 @@ void OnPwmSequenceEnd() {
 }
 
 void loop() {
-    if(nrf_gpio_pin_read(kTTL2Pin)==0)  //Read GPIO
-        nrf_gpio_pin_clear(kTTL1Pin);   //Turn ON the LED
-    else
-        nrf_gpio_pin_set(kTTL1Pin);   //Turn OFF the LED
+    if(nrf_gpio_pin_read(kTTL2Pin)==0) {
+	// kTTL2Pin Button pushed 
+        nrf_gpio_pin_clear(kTTL1Pin);   // Sets 3.3V on kTTL1Pin
+	Serial.println("TTL - 4 - LOW");
+    } else  {
+	// kTTL1Pin Button open
+        nrf_gpio_pin_set(kTTL1Pin);   // Sets 0V on kTTL1Pin
+	Serial.println("TTL - 4 - HIGH");
+    }
 
-    delay(100); //100ms sleep
+    delay(200);
 }
 
 void LowBatteryWarning() {
