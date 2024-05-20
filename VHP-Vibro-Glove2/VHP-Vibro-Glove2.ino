@@ -67,8 +67,16 @@ void OnPwmSequenceEnd() {
 	    if(channel==active_channel) {
 		uint16_t* cp = PwmTactor.GetChannelPointer(channel);
 		g_stream->set_chan_samples(cp, channel);
+
+		if(!g_settings.chan8) {
+		    uint16_t* cp = PwmTactor.GetChannelPointer(7-channel);
+		    g_stream->set_chan_samples(cp, channel);
+		}
 	    } else {
-		PwmTactor.SilenceChannel(channel, g_volume_lvl);		
+		PwmTactor.SilenceChannel(channel, g_volume_lvl);
+		if(!g_settings.chan8)
+		    PwmTactor.SilenceChannel(7-channel, g_volume_lvl);
+		
 	    }
     } else {
 	for(uint32_t i = 0; i < g_settings.default_channels; i++)
