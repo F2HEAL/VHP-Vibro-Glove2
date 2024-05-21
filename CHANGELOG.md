@@ -1,5 +1,9 @@
 # Change log
 
+## 1.1.1 - 2024-05-21
+
+ * Fix regression in mirrored hand stimulation for `chan8 = false`
+
 ## 1.1.0 - 2024-02-16
 
 * Change to channel shuffle so that consecutive stimulation of the
