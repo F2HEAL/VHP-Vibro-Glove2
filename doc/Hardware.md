@@ -4,7 +4,7 @@
 
 We used the board developed in the [Google Audio-to-tactile](https://github.com/google/audio-to-tactile) project (Big thanks!). It is an open source board with a Nordic nRF52840 MCU.
 
-It's not commercially available it this form and needs to be produced from the specifications provided [here](https://github.com/google/audio-to-tactile/blob/main/extras/doc/hardware/index.md). 
+It's not commercially available in this form and needs to be produced from the specifications provided [here](https://github.com/google/audio-to-tactile/blob/main/extras/doc/hardware/index.md). 
 
 # Components
 
