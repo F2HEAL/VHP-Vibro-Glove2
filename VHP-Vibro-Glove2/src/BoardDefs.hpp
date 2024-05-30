@@ -24,10 +24,10 @@ namespace audio_tactile {
     constexpr int kPdmSelectPin = 26;    
     constexpr int kTactileSwitchPin =34;
     
-    //With the upgrade to adafruit:nrf52 1.6.0 the existing approach via
-    //UI.hpp no longer worked. It is replaced by a call to attachInterrupt
-    //from the NRF SDK. 
-    constexpr int kTactileSwitchPin_nrf = 7 ;
+    //PINs used for TTL input, start / stop respectively
+    constexpr int kTTL1Pin = 5;
+    constexpr int kTTL2Pin = 4;
+
     
     // Number of ADC samples per buffer.
     constexpr int kAdcDataSize = 64;

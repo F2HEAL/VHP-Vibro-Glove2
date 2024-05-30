@@ -43,7 +43,13 @@ void setup() {
     // Configure button to toggle stream
     // Set pin as inputs with an internal pullup.
     nrf_gpio_cfg_input(kTactileSwitchPin, NRF_GPIO_PIN_PULLUP);
-    attachInterrupt(kTactileSwitchPin_nrf, ToggleStream, RISING);
+    attachInterrupt(digitalPinToInterrupt(kTactileSwitchPin), ToggleStream, RISING);
+
+    nrf_gpio_cfg_input(kTTL1Pin, NRF_GPIO_PIN_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(kTTL1Pin), StartStream, RISING);
+
+    nrf_gpio_cfg_input(kTTL2Pin, NRF_GPIO_PIN_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(kTTL2Pin), StopStream, RISING);
     
     nrf_gpio_pin_clear(kLedPinBlue);
     nrf_gpio_pin_clear(kLedPinGreen);  
@@ -119,6 +125,21 @@ void OnBleEvent() {
 	break;
     }
 }
+
+
+void StartStream()
+{
+    if(!g_running)
+	ToggleStream();
+}
+
+void StopStream()
+{
+    if(g_running)
+	ToggleStream();
+}
+
+
 
 void ToggleStream() {
     
