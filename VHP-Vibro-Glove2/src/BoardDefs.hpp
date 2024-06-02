@@ -19,10 +19,13 @@ namespace audio_tactile {
     constexpr int kLedPinGreen =36;
     constexpr int kThermistorPin = 3;
     constexpr int kCurrentAmpEnable = 42;
-    constexpr int kPdmClockPin = 6;
-    constexpr int kPdmDataPin = 7;
-    constexpr int kPdmSelectPin = 26;    
     constexpr int kTactileSwitchPin =34;
+
+    //With the upgrade to adafruit:nrf52 1.6.0 the existing approach via
+    //UI.hpp no longer worked. It is replaced by a call to attachInterrupt
+    //from the NRF SDK. 
+    constexpr int kTactileSwitchPin_nrf = 7 ;
+
     
     //PINs used for TTL input, start / stop respectively
     constexpr int kTTL1Pin = 5;

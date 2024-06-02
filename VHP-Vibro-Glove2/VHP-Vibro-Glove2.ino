@@ -19,6 +19,8 @@ uint16_t g_volume_lvl = g_volume * g_settings.vol_amplitude / 100;
 uint64_t g_running_since = 0;
 
 void setup() {
+    
+    
     nrf_gpio_cfg_output(kLedPinBlue);
     nrf_gpio_cfg_output(kLedPinGreen);  
     nrf_gpio_pin_set(kLedPinBlue);
@@ -43,13 +45,25 @@ void setup() {
     // Configure button to toggle stream
     // Set pin as inputs with an internal pullup.
     nrf_gpio_cfg_input(kTactileSwitchPin, NRF_GPIO_PIN_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(kTactileSwitchPin), ToggleStream, RISING);
+    attachInterrupt(kTactileSwitchPin_nrf, ToggleStream, RISING);
 
-    nrf_gpio_cfg_input(kTTL1Pin, NRF_GPIO_PIN_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(kTTL1Pin), StartStream, RISING);
+    //Configure TTL1 input , options:
+    //NRF_GPIO_PIN_NOPULL     Pin pull-up resistor disabled.  
+    //NRF_GPIO_PIN_PULLDOWN   Pin pull-down resistor enabled. 
+    //NRF_GPIO_PIN_PULLUP     Pin pull-up resistor enabled.   
+    nrf_gpio_cfg_input(kTTL1Pin, NRF_GPIO_PIN_NOPULL);
 
-    nrf_gpio_cfg_input(kTTL2Pin, NRF_GPIO_PIN_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(kTTL2Pin), StopStream, RISING);
+    //Attach interrupt:
+    //LOW to trigger the interrupt whenever the pin is low,
+    //CHANGE to trigger the interrupt whenever the pin changes value
+    //RISING to trigger when the pin goes from low to high,
+    //FALLING for when the pin goes from high to low.
+    //HIGH to trigger the interrupt whenever the pin is high. (Supported?)
+    attachInterrupt(digitalPinToInterrupt(kTTL1Pin), StartStream, LOW);
+
+    //TTl2 input
+    nrf_gpio_cfg_input(kTTL2Pin, NRF_GPIO_PIN_NOPULL);
+    attachInterrupt(digitalPinToInterrupt(kTTL2Pin), StopStream, LOW);
     
     nrf_gpio_pin_clear(kLedPinBlue);
     nrf_gpio_pin_clear(kLedPinGreen);  
@@ -90,13 +104,17 @@ void OnPwmSequenceEnd() {
     }    
 }
 
+volatile int g_starts = 0;
+volatile int g_stops = 0;
+
+
 void loop() {
-    // Output battery voltage via serial (debugging)
-    uint16_t battery = PuckBatteryMonitor.MeasureBatteryVoltage();
-    float converted = PuckBatteryMonitor.ConvertBatteryVoltageToFloat(battery);
-    Serial.print("Battery voltage: ");
-    Serial.println(converted);
-    delay(120000);
+    Serial.print("Starts: ");
+    Serial.print(g_starts);
+    Serial.print(", stops: ");
+    Serial.println(g_stops);
+
+    delay(5000);
 }
 
 void LowBatteryWarning() {
@@ -127,14 +145,19 @@ void OnBleEvent() {
 }
 
 
+
 void StartStream()
 {
+    g_starts++;
+    
     if(!g_running)
 	ToggleStream();
 }
 
 void StopStream()
 {
+    g_stops++;
+    
     if(g_running)
 	ToggleStream();
 }
