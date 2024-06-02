@@ -59,11 +59,11 @@ void setup() {
     //RISING to trigger when the pin goes from low to high,
     //FALLING for when the pin goes from high to low.
     //HIGH to trigger the interrupt whenever the pin is high. (Supported?)
-    attachInterrupt(digitalPinToInterrupt(kTTL1Pin), StartStream, LOW);
+    attachInterrupt(kTTL1Pin_nrf, StartStream, LOW);
 
     //TTl2 input
     nrf_gpio_cfg_input(kTTL2Pin, NRF_GPIO_PIN_NOPULL);
-    attachInterrupt(digitalPinToInterrupt(kTTL2Pin), StopStream, LOW);
+    attachInterrupt(kTTL2Pin_nrf, StopStream, LOW);
     
     nrf_gpio_pin_clear(kLedPinBlue);
     nrf_gpio_pin_clear(kLedPinGreen);  
@@ -167,11 +167,11 @@ volatile unsigned long g_last_toggle = 0;
 
 void ToggleStream() {
 
+    // avoid too frequent toggles
     auto now = millis();
     if(now - g_last_toggle < 250)
 	return;
     g_last_toggle = now;
-    
     
     if(g_running) {
 	g_running = false;    
