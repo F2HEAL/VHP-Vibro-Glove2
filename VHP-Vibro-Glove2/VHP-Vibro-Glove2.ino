@@ -47,23 +47,13 @@ void setup() {
     nrf_gpio_cfg_input(kTactileSwitchPin, NRF_GPIO_PIN_PULLUP);
     attachInterrupt(kTactileSwitchPin_nrf, ToggleStream, RISING);
 
-    //Configure TTL1 input , options:
-    //NRF_GPIO_PIN_NOPULL     Pin pull-up resistor disabled.  
-    //NRF_GPIO_PIN_PULLDOWN   Pin pull-down resistor enabled. 
-    //NRF_GPIO_PIN_PULLUP     Pin pull-up resistor enabled.   
+    //Configure TTL1 input and attach interrupt
     nrf_gpio_cfg_input(kTTL1Pin, NRF_GPIO_PIN_PULLUP);
+    attachInterrupt(kTTL1Pin_nrf, StartStream, FALLING);
 
-    //Attach interrupt:
-    //LOW to trigger the interrupt whenever the pin is low,
-    //CHANGE to trigger the interrupt whenever the pin changes value
-    //RISING to trigger when the pin goes from low to high,
-    //FALLING for when the pin goes from high to low.
-    //HIGH to trigger the interrupt whenever the pin is high. (Supported?)
-    attachInterrupt(kTTL1Pin_nrf, StartStream, LOW);
-
-    //TTl2 input
+    //Configure TTL2 input and attach interrupt
     nrf_gpio_cfg_input(kTTL2Pin, NRF_GPIO_PIN_PULLUP);
-    attachInterrupt(kTTL2Pin_nrf, StopStream, LOW);
+    attachInterrupt(kTTL2Pin_nrf, StopStream, FALLING);
     
     nrf_gpio_pin_clear(kLedPinBlue);
     nrf_gpio_pin_clear(kLedPinGreen);  
@@ -109,12 +99,12 @@ volatile int g_stops = 0;
 
 
 void loop() {
-    Serial.print("Starts: ");
-    Serial.print(g_starts);
-    Serial.print(", stops: ");
-    Serial.println(g_stops);
-
-    delay(5000);
+    // Output battery voltage via serial (debugging)
+    uint16_t battery = PuckBatteryMonitor.MeasureBatteryVoltage();
+    float converted = PuckBatteryMonitor.ConvertBatteryVoltageToFloat(battery);
+    Serial.print("Battery voltage: ");
+    Serial.println(converted);
+    delay(120000);    
 }
 
 void LowBatteryWarning() {
