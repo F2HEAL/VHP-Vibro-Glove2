@@ -51,7 +51,7 @@ void setup() {
     //NRF_GPIO_PIN_NOPULL     Pin pull-up resistor disabled.  
     //NRF_GPIO_PIN_PULLDOWN   Pin pull-down resistor enabled. 
     //NRF_GPIO_PIN_PULLUP     Pin pull-up resistor enabled.   
-    nrf_gpio_cfg_input(kTTL1Pin, NRF_GPIO_PIN_NOPULL);
+    nrf_gpio_cfg_input(kTTL1Pin, NRF_GPIO_PIN_PULLUP);
 
     //Attach interrupt:
     //LOW to trigger the interrupt whenever the pin is low,
@@ -62,7 +62,7 @@ void setup() {
     attachInterrupt(kTTL1Pin_nrf, StartStream, LOW);
 
     //TTl2 input
-    nrf_gpio_cfg_input(kTTL2Pin, NRF_GPIO_PIN_NOPULL);
+    nrf_gpio_cfg_input(kTTL2Pin, NRF_GPIO_PIN_PULLUP);
     attachInterrupt(kTTL2Pin_nrf, StopStream, LOW);
     
     nrf_gpio_pin_clear(kLedPinBlue);
