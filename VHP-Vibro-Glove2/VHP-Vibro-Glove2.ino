@@ -19,6 +19,8 @@ uint16_t g_volume_lvl = g_volume * g_settings.vol_amplitude / 100;
 uint64_t g_running_since = 0;
 
 void setup() {
+    
+    
     nrf_gpio_cfg_output(kLedPinBlue);
     nrf_gpio_cfg_output(kLedPinGreen);  
     nrf_gpio_pin_set(kLedPinBlue);
@@ -44,6 +46,14 @@ void setup() {
     // Set pin as inputs with an internal pullup.
     nrf_gpio_cfg_input(kTactileSwitchPin, NRF_GPIO_PIN_PULLUP);
     attachInterrupt(kTactileSwitchPin_nrf, ToggleStream, RISING);
+
+    //Configure TTL1 input and attach interrupt
+    nrf_gpio_cfg_input(kTTL1Pin, NRF_GPIO_PIN_PULLUP);
+    attachInterrupt(kTTL1Pin_nrf, StartStream, FALLING);
+
+    //Configure TTL2 input and attach interrupt
+    nrf_gpio_cfg_input(kTTL2Pin, NRF_GPIO_PIN_PULLUP);
+    attachInterrupt(kTTL2Pin_nrf, StopStream, FALLING);
     
     nrf_gpio_pin_clear(kLedPinBlue);
     nrf_gpio_pin_clear(kLedPinGreen);  
@@ -84,13 +94,17 @@ void OnPwmSequenceEnd() {
     }    
 }
 
+volatile int g_starts = 0;
+volatile int g_stops = 0;
+
+
 void loop() {
     // Output battery voltage via serial (debugging)
     uint16_t battery = PuckBatteryMonitor.MeasureBatteryVoltage();
     float converted = PuckBatteryMonitor.ConvertBatteryVoltageToFloat(battery);
     Serial.print("Battery voltage: ");
     Serial.println(converted);
-    delay(120000);
+    delay(120000);    
 }
 
 void LowBatteryWarning() {
@@ -120,7 +134,34 @@ void OnBleEvent() {
     }
 }
 
+
+
+void StartStream()
+{
+    g_starts++;
+    
+    if(!g_running)
+	ToggleStream();
+}
+
+void StopStream()
+{
+    g_stops++;
+    
+    if(g_running)
+	ToggleStream();
+}
+
+
+volatile unsigned long g_last_toggle = 0;
+
 void ToggleStream() {
+
+    // avoid too frequent toggles
+    auto now = millis();
+    if(now - g_last_toggle < 250)
+	return;
+    g_last_toggle = now;
     
     if(g_running) {
 	g_running = false;    

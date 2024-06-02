@@ -31,6 +31,34 @@ Change this in your browser by going to:
 
 On Apple devices the [BlueFy](https://apps.apple.com/us/app/bluefy-web-ble-browser/id1492822055) Web Browser can also be used
 
+## TTL Trigger
+
+In the current setup a TTL trigger can be used to start and stop the device. This can be used for EEG measurement or an extra on-off switch.
+
+### Qwiic connector
+
+The onboard Qwiic connector is used to control the TTL Trigger. In the image below, the Qwiic connector is connected with the black-blue-yellow-red cable:
+
+![image](img/nrf_qwiic.jpg)
+
+The pins used are defined in [BoardDefs.hpp](../VHP-Vibro-Glove2/src/BoardDefs.hpp). Refer to [this image](img/AdaFruit-nRF52840.jpg) to translate between the nRF and Arduino pins. 
+
+### Test with Digital Coupler
+
+In the setup below, the TTL is triggered with a parallel port that is connected to a [digital coupler](http://www.analog.com/ADuM1201?doc=ADuM1200_1201.pdf). The TTL can be triggered with a digital input from the coupler. The coupler is connected with the VHP board via the Qwiic connector.
+
+![image](img/dig-coupler_parport_nrf.jpg)
+
+In the setup above:
+
+* The LPT Port has 25 pins
+* Pin 18 is used as ground connected with a black wire.
+* Pin 9, being Digital output 7 is made permanently high at 5V as power supply for the digital coupler. Being the red wire.
+* Pin 2, being Digital output 0 is used as stop Signal. Switching it from logical 0 to logical one generates a rising edge, being the stop Signal.
+* Pin 3, being Digital output 1 is used as start Signal. Switching it from logical 0 to logical one generates a rising edge, being the start Signal.
+
+![image](img/parport-screenshot.jpg)
+
 ## Internals
 
 The software will produce a waveform in a random sequence on the different channels according to the settings passed to **SStream**.
@@ -41,7 +69,7 @@ These parameters are defined and documented in [SStream.hpp](VHP-Vibro-Glove2/SS
 
 ![image](https://github.com/F2HEAL/VHP-Vibro-Glove2/assets/18469570/fc01761d-4320-4044-b50b-c7768205cf2b)
 
- The default settings in  [Settings.hpp](../VHP-Vibro-Glove2/Settings.hpp) provide with a balanced default:
+ The default settings in [Settings.hpp](../VHP-Vibro-Glove2/Settings.hpp) provide with a balanced default:
  
  * 8 channels
  * Samplerate 46875Hz, long story, tied to SetUpsamplingFactor(1), only touch it if you know what you're doing ;-)
