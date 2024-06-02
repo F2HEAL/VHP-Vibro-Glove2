@@ -1,5 +1,9 @@
 # Change log
 
+## 1.2.0 - 2024-06-02
+
+  * Add TTL control. See [Usage.md](doc/Usage.md) for details.
+
 ## 1.1.1 - 2024-05-21
 
  * Fix regression in mirrored hand stimulation for `chan8 = false`
