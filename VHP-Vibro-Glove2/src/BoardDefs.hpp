@@ -19,6 +19,9 @@ namespace audio_tactile {
     constexpr int kLedPinGreen =36;
     constexpr int kThermistorPin = 3;
     constexpr int kCurrentAmpEnable = 42;
+
+    constexpr int kExtMicAIN4 = 28;
+
     constexpr int kTactileSwitchPin =34;
 
     //With the upgrade to adafruit:nrf52 1.6.0 the existing approach via
