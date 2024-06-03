@@ -48,12 +48,12 @@ void setup() {
     attachInterrupt(kTactileSwitchPin_nrf, ToggleStream, RISING);
 
     //Configure TTL1 input and attach interrupt
-    nrf_gpio_cfg_input(kTTL1Pin, NRF_GPIO_PIN_PULLUP);
-    attachInterrupt(kTTL1Pin_nrf, StartStream, FALLING);
+    nrf_gpio_cfg_input(kTTL1Pin, NRF_GPIO_PIN_NOPULL);
+    attachInterrupt(kTTL1Pin_nrf, StartStream, RISING);
 
     //Configure TTL2 input and attach interrupt
-    nrf_gpio_cfg_input(kTTL2Pin, NRF_GPIO_PIN_PULLUP);
-    attachInterrupt(kTTL2Pin_nrf, StopStream, FALLING);
+    nrf_gpio_cfg_input(kTTL2Pin, NRF_GPIO_PIN_NOPULL);
+    attachInterrupt(kTTL2Pin_nrf, StopStream, RISING);
 
     //kExtMicAIN4 as output
     nrf_gpio_cfg_output(kExtMicAIN4);
