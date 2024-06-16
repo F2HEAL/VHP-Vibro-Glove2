@@ -98,9 +98,6 @@ void OnPwmSequenceEnd() {
     }    
 }
 
-
-
-
 void loop() {
     static unsigned counter = 0;
     
@@ -111,8 +108,11 @@ void loop() {
     ToggleStream(); // start stream for measurement
     delay(8100);
     ToggleStream(); // stop stream
-
-    g_dlog.serial_print();
+    delay(1000);     // allow silence to be applied
+    
+    //g_dlog.serial_print();
+    g_dlog.power_print();
+    
     g_dlog.reset();
     delay(1000);
 }

@@ -20,6 +20,8 @@
  */
 
 class SampleCache {
+    constexpr static uint32_t square_wave = true;
+    
 public:
     
     explicit SampleCache(
@@ -46,13 +48,20 @@ private:
     std::vector<float> cache_;
     
     constexpr static float pi() { return std::atan(1)*4; }
-    
-    void init_cache_(uint32_t samplerate, uint32_t stimfreq) {				   
-	for(uint32_t i = 0; i < samples_needed_; i++) 
-	    cache_[i] = std::sin (2 * pi() * i * stimfreq / samplerate);	
-    }
 
-    
+    void init_cache_(uint32_t samplerate, uint32_t stimfreq) {
+	if(square_wave) {
+	    for(uint32_t i = 0; i < samples_needed_; i++) {
+		if( (2 * i / ( samplerate / stimfreq) ) % 2 == 0 )
+		    cache_[i] = -1.0;
+		else
+		    cache_[i] = 1.0;
+	    }
+	} else {
+	    for(uint32_t i = 0; i < samples_needed_; i++) 
+		cache_[i] = std::sin (2 * pi() * i * stimfreq / samplerate);	
+	}
+    }
 
 };
 
