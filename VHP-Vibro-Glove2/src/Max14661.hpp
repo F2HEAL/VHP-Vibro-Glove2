@@ -223,49 +223,49 @@ namespace audio_tactile {
 		    {{DIR0, 0x20},  // Connects switch AB06 to COMA.
 		     {DIR2, 0x10}}  // Connects switch AB05 to COMB.
 		},
-		// Channel 4 (kPwmL3Pin).
+		// Channel 4 (kPwmL3Pin). <Without noise
 		{
 		    kMax14661Address1,
 		    {{DIR1, 0x02},  // Connects switch AB10 to COMA.
 		     {DIR3, 0x01}}  // Connects switch AB09 to COMB.
 		},
-		// Channel 5 (kPwmR3Pin).
+		// Channel 5 (kPwmR3Pin). <Without noise
 		{
 		    kMax14661Address1,
 		    {{DIR1, 0x08},  // Connects switch AB12 to COMA.
 		     {DIR3, 0x04}}  // Connects switch AB11 to COMB.
 		},
-		// Channel 6 (kPwmL4Pin).
+		// Channel 6 (kPwmL4Pin). <Without noise
 		{
 		    kMax14661Address1,
 		    {{DIR1, 0x80},  // Connects switch AB16 to COMA.
 		     {DIR3, 0x40}}  // Connects switch AB15 to COMB.
 		},
-		// Channel 7 (kPwmR4Pin).
+		// Channel 7 (kPwmR4Pin). <Without noise
 		{
 		    kMax14661Address1,
 		    {{DIR1, 0x20},  // Connects switch AB14 to COMA.
 		     {DIR3, 0x10}}  // Connects switch AB13 to COMB.
 		},
-		// Channel 8 (kPwmL5Pin).
+		// Channel 8 (kPwmL5Pin). <Noisy
 		{
 		    kMax14661Address1,
 		    {{DIR0, 0x02},  // Connects switch AB02 to COMA.
 		     {DIR2, 0x01}}  // Connects switch AB01 to COMB.
 		},
-		// Channel 9 (kPwmR5Pin).
+		// Channel 9 (kPwmR5Pin). <Noisy
 		{
 		    kMax14661Address1,
 		    {{DIR0, 0x08},  // Connects switch AB04 to COMA.
 		     {DIR2, 0x04}}  // Connects switch AB03 to COMB.
 		},
-		// Channel 10 (kPwmL6Pin).
+		// Channel 10 (kPwmL6Pin). <Noisy
 		{
 		    kMax14661Address1,
 		    {{DIR0, 0x80},  // Connects switch AB08 to COMA.
 		     {DIR2, 0x40}}  // Connects switch AB07 to COMB.
 		},
-		// Channel 11 (kPwmR6Pin).
+		// Channel 11 (kPwmR6Pin). <Noisy
 		{
 		    kMax14661Address1,
 		    {{DIR0, 0x20},  // Connects switch AB06 to COMA.
