@@ -50,10 +50,7 @@ void setup() {
     //Configure TTL1 input and attach interrupt
     nrf_gpio_cfg_input(kTTL1Pin, NRF_GPIO_PIN_PULLUP);
     attachInterrupt(kTTL1Pin_nrf, StartStream, FALLING);
-
-    //Configure TTL2 input and attach interrupt
-    nrf_gpio_cfg_input(kTTL2Pin, NRF_GPIO_PIN_PULLUP);
-    attachInterrupt(kTTL2Pin_nrf, StopStream, FALLING);
+    attachInterrupt(kTTL1Pin_nrf, StopStream, RISING);
     
     nrf_gpio_pin_clear(kLedPinBlue);
     nrf_gpio_pin_clear(kLedPinGreen);  
