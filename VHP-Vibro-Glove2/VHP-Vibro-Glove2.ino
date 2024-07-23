@@ -159,13 +159,13 @@ void StopStream()
 }
 
 
-volatile unsigned long g_last_toggle = 0;
+volatile unsigned long g_last_toggle = millis();
 
 void ToggleStream() {
 
     // avoid too frequent toggles
     auto now = millis();
-    if(now - g_last_toggle < 250)
+    if(now - g_last_toggle < 1000)
 	return;
     g_last_toggle = now;
     
