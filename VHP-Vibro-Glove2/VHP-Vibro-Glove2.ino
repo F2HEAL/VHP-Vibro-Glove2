@@ -50,11 +50,10 @@ void setup() {
     //Configure TTL1 input and attach interrupt
     nrf_gpio_cfg_input(kTTL1Pin, NRF_GPIO_PIN_NOPULL);
     attachInterrupt(kTTL1Pin_nrf, StartStream, RISING);
-    attachInterrupt(kTTL1Pin_nrf, StopStream, FALLING);
     
     //Configure TTL2 input and attach interrupt
-    //nrf_gpio_cfg_input(kTTL2Pin, NRF_GPIO_PIN_NOPULL);
-    //attachInterrupt(kTTL2Pin_nrf, StopStream, RISING);
+    nrf_gpio_cfg_input(kTTL2Pin, NRF_GPIO_PIN_NOPULL);
+    attachInterrupt(kTTL2Pin_nrf, StopStream, FALLING);
 
     //kExtMicAIN4 as output
     nrf_gpio_cfg_output(kExtMicAIN4);
