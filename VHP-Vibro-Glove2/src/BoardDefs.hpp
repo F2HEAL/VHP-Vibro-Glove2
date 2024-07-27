@@ -33,9 +33,8 @@ namespace audio_tactile {
     //PINs used for TTL input, start / stop respectively
     constexpr int kTTL1Pin     = 5;
     constexpr int kTTL1Pin_nrf = 15;
-    constexpr int kTTL2Pin     = 4;
-    constexpr int kTTL2Pin_nrf = 14;
 
+    constexpr int kLedPinExtra     = 4;
     
     // Number of ADC samples per buffer.
     constexpr int kAdcDataSize = 64;

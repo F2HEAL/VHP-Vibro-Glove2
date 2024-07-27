@@ -22,7 +22,8 @@ void setup() {
     
     
     nrf_gpio_cfg_output(kLedPinBlue);
-    nrf_gpio_cfg_output(kLedPinGreen);  
+    nrf_gpio_cfg_output(kLedPinGreen);
+    nrf_gpio_cfg_output(kLedPinExtra);
     nrf_gpio_pin_set(kLedPinBlue);
     
     PwmTactor.OnSequenceEnd(OnPwmSequenceEnd);
@@ -48,17 +49,9 @@ void setup() {
     attachInterrupt(kTactileSwitchPin_nrf, ToggleStream, RISING);
 
     //Configure TTL1 input and attach interrupt
-    nrf_gpio_cfg_input(kTTL1Pin, NRF_GPIO_PIN_NOPULL);
+    nrf_gpio_cfg_input(kTTL1Pin, NRF_GPIO_PIN_PULLUP);
     attachInterrupt(kTTL1Pin_nrf, GpioToggleStream, CHANGE);
     
-
-    //kExtMicAIN4 as output
-    nrf_gpio_cfg_output(kExtMicAIN4);
-    //nrf_gpio_pin_clear(kExtMicAIN4);
-    nrf_gpio_pin_set(kExtMicAIN4);
-    
-    
-    nrf_gpio_pin_clear(kLedPinBlue);
     nrf_gpio_pin_clear(kLedPinGreen);  
     
     if(g_settings.start_stream_on_power_on) {
@@ -150,17 +143,19 @@ void ToggleStream() {
 
     // avoid too frequent toggles
     auto now = millis();
-    if(now - g_last_toggle < 1000)
+    if(now - g_last_toggle < 100)
 	return;
     g_last_toggle = now;
     
     if(g_running) {
 	g_running = false;    
-	nrf_gpio_pin_clear(kLedPinGreen);    
+	nrf_gpio_pin_clear(kLedPinGreen);
+	nrf_gpio_pin_clear(kLedPinExtra);    	
 	Serial.println("Stream is running. Stopping.");
 	delete g_stream;
     } else {
 	nrf_gpio_pin_set(kLedPinGreen);
+	nrf_gpio_pin_set(kLedPinExtra);	
 	Serial.println("Starting Stream.");
 	g_stream = new SStream(g_settings.chan8,
 			       g_settings.samplerate,
@@ -177,12 +172,12 @@ void ToggleStream() {
     }
     
     if(g_ble_connected) {
-	SendStatus();    
+     	SendStatus();
     }
+    
 }
 
 void SendStatus() {
-    Serial.println("Message: GetStatus.");
     uint16_t battery_voltage_uint16 = PuckBatteryMonitor.MeasureBatteryVoltage();
     float battery_voltage_float = PuckBatteryMonitor.ConvertBatteryVoltageToFloat(battery_voltage_uint16);
     
