@@ -14,7 +14,7 @@ SStream *g_stream = 0;
 
 bool g_ble_connected = false;
 bool g_running = false;
-uint8_t g_volume = 75;
+uint8_t g_volume = 25;
 uint16_t g_volume_lvl = g_volume * g_settings.vol_amplitude / 100;
 uint64_t g_running_since = 0;
 
