@@ -16,7 +16,7 @@ The rest of the components needed can be found in the [BOM](BOM).
 
 The [fingerbeds](<3D Fingerbed>) and [casing](<3D Controler Housing>) are 3D printed. The models can be found in the documentation folder.
 
-![image](https://github.com/F2HEAL/doc/3D Fingerbed/Godef Fingerbed v26.jpg) v26
+![image](https://github.com/F2HEAL/VHP-Vibro-Glove2/blob/main/doc/3D%20Fingerbed/Godef%20Fingerbed%20v26.jpg) v26
 
 ![image](https://github.com/F2HEAL/VHP-Vibro-Glove2/assets/18469570/b377d606-d715-41b6-bfe6-8e3704c1f700) v23
 
