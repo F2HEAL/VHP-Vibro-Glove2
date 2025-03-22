@@ -1,0 +1,52 @@
+{
+  "presets": [
+    {
+      "name": "8-40",
+      "8_channels": true,
+      "samplerate_hz": 46875,
+      "stimulation_frequency_hz": 40,
+      "stimulation_duration_ms": 200,
+      "cycle_period_duration_ms": 2240,
+      "number_of_cycles_in_pauze_cycle": 5,
+      "number_of_cycles_in_pauze_cycle_to_pauze": 2,
+      "jitter_on_timing_permill": 23.5,
+      "volume_percent": 75.0
+    },
+    {
+      "name": "8-250",
+      "8_channels": true,
+      "samplerate_hz": 46875,
+      "stimulation_frequency_hz": 250,
+      "stimulation_duration_ms": 100,
+      "cycle_period_duration_ms": 1332,
+      "number_of_cycles_in_pauze_cycle": 5,
+      "number_of_cycles_in_pauze_cycle_to_pauze": 2,
+      "jitter_on_timing_permill": 23.5,
+      "volume_percent": 7.0
+    },
+    {
+      "name": "4-40",
+      "8_channels": false,
+      "samplerate_hz": 46875,
+      "stimulation_frequency_hz": 40,
+      "stimulation_duration_ms": 200,
+      "cycle_period_duration_ms": 1120,
+      "number_of_cycles_in_pauze_cycle": 5,
+      "number_of_cycles_in_pauze_cycle_to_pauze": 2,
+      "jitter_on_timing_permill": 23.5,
+      "volume_percent": 75.0
+    },
+    {
+      "name": "4-250",
+      "8_channels": false,
+      "samplerate_hz": 46875,
+      "stimulation_frequency_hz": 250,
+      "stimulation_duration_ms": 100,
+      "cycle_period_duration_ms": 666,
+      "number_of_cycles_in_pauze_cycle": 5,
+      "number_of_cycles_in_pauze_cycle_to_pauze": 2,
+      "jitter_on_timing_permill": 23.5,
+      "volume_percent": 7.0
+    }
+  ]
+}

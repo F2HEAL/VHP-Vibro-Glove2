@@ -1,5 +1,9 @@
 # Change log
 
+## 1.3.0 - 2025-03-22
+
+  * Add new webui: f2heal_webui_v2.html. See [Usage.md](doc/Usage.md).
+
 ## 1.2.0 - 2024-06-02
 
   * Add TTL control. See [Usage.md](doc/Usage.md) for details.

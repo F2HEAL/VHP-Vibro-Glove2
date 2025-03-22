@@ -1,0 +1,33 @@
+body {
+    font-size: 2.1rem; /* Larger base font size */
+}
+
+legend {
+    font-size: 1.5em;
+}
+
+h1 {
+    font-size: 2.2em;
+}
+
+h4 {
+    font-size: 1.5em;
+}
+
+button, input[type="button"], input[type="submit"] {
+    font-size: 1.6em; /* Increase button font size */
+    padding: 0.3em 0.5em; /* Add more padding to buttons for a larger click/touch area */
+}
+
+input[type="text"], input[type="number"], option {
+    font-size: 1.15em;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold; /* Ensure headers are prominent */
+}
+
+.table td, .table th {
+    font-size: 1rem; /* Adjust table font size for readability */
+}

@@ -6,11 +6,11 @@ The default settings are defined in [Settings.hpp](../VHP-Vibro-Glove2/Settings.
 
 ## WebUI
 
-The software can be controlled with a browser supporting Bluetooth Web API.
+The software can be controlled with a browser supporting Bluetooth Web API (see below).
 
 After starting the device will activate its Bluetooth connection, and start accepting connections. Note that the Bluetooth interface will deactivate after 5mins of inactivity.
 
-Open *f2heal_webui.html*  found in [WebUI folder](../webui) in a browser to use this feature. A recent version can be on [WebUI F2Heal](https://webui.f2heal.com).
+Open *f2heal_webui_v2.html*  found in [WebUI folder](../webui) in a browser to use this feature. 
 
 Use the **connect** button to connect to a device.
 
