@@ -222,12 +222,12 @@ class BleManager {
 	let view_j = new DataView(messagePayload.buffer, 21, 4);
 	this.s_jitter = view_j.getUint32(0, /*littleEndian=*/true);
 
-	let view_sc = new DataView(messagePayload.buffer, 25, 4);
-	this.s_single_channel = view_sc.getUint32(0, /*littleEndian=*/true);
-	
-	let view_tm = new  DataView(messagePayload.buffer, 29, 1);
+	let view_tm = new  DataView(messagePayload.buffer, 25, 1);
 	let val_tm = view_tm.getUint8(0);
 	this.s_testmode = val_tm == 1;
+	
+	let view_sc = new DataView(messagePayload.buffer, 26, 4);
+	this.s_single_channel = view_sc.getUint32(0, /*littleEndian=*/true);
 
 	this.onSettingsBatch();
 	

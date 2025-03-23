@@ -69,8 +69,8 @@ public:
 	{
 	    randomSeed(micros());
 
-	    if(single_channel > 0 && single_channel <= max_channels) 
-		std::fill(channel_order_.begin(), channel_order_.end(), single_channel);
+	    if(test_mode && single_channel > 0 && single_channel <= max_channels) 
+		std::fill(channel_order_.begin(), channel_order_.end(), single_channel - 1);
 	    else
 		std::iota(channel_order_.begin(), channel_order_.end(), 0);
 	    

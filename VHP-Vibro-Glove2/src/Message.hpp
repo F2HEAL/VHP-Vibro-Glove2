@@ -156,8 +156,8 @@ namespace audio_tactile {
 	    ::LittleEndianWriteU32(settings.pauzecycleperiod, dest); dest += 4;
 	    ::LittleEndianWriteU32(settings.pauzedcycles, dest); dest += 4;
 	    ::LittleEndianWriteU32(settings.jitter, dest); dest += 4;
-	    ::LittleEndianWriteU32(settings.single_channel, dest); dest += 4;	    
-	    *dest = settings.test_mode ? 1 : 0; dest++;
+	    *dest = settings.test_mode ? 1 : 0; dest++;	    
+	    ::LittleEndianWriteU32(settings.single_channel, dest); dest += 4;
 
 	    
 	    bytes_[3] = dest - (bytes_ + kHeaderSize);
