@@ -91,10 +91,6 @@ void OnPwmSequenceEnd() {
     }    
 }
 
-volatile int g_starts = 0;
-volatile int g_stops = 0;
-
-
 void loop() {
     // Output battery voltage via serial (debugging)
     uint16_t battery = PuckBatteryMonitor.MeasureBatteryVoltage();
@@ -135,16 +131,12 @@ void OnBleEvent() {
 
 void StartStream()
 {
-    g_starts++;
-    
     if(!g_running)
 	ToggleStream();
 }
 
 void StopStream()
 {
-    g_stops++;
-    
     if(g_running)
 	ToggleStream();
 }
