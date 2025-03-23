@@ -45,6 +45,7 @@ public:
      *        (0...1000), see calc_channel_jitter_()
      * @param volume - value for volume, range for valid value is 0..512
      * @param test_mode - don't randomize channel order
+     * @param single_channel - when non-zero, only trigger specified channel
      */
     explicit SStream(
 	bool chan8,
@@ -56,7 +57,8 @@ public:
 	uint32_t pauzedcycles,
 	uint16_t jitter,
 	uint32_t volume,
-	bool test_mode = true
+	bool test_mode = true,
+	uint16_t single_channel = 0
 	) : frame_counter_(0), cycle_counter_(0), channel_order_{0}, channel_jitter_{0},
 	    chan8_(chan8), samplerate_(samplerate), stimfreq_(stimfreq), stimduration_(stimduration),
 	    cycleperiod_(cycleperiod), pauzecycleperiod_(pauzecycleperiod), pauzedcycles_(pauzedcycles),
@@ -66,8 +68,12 @@ public:
 	    sample_cache_(samplerate, stimfreq)
 	{
 	    randomSeed(micros());
+
+	    if(single_channel > 0 && single_channel <= max_channels) 
+		std::fill(channel_order_.begin(), channel_order_.end(), single_channel);
+	    else
+		std::iota(channel_order_.begin(), channel_order_.end(), 0);
 	    
-	    std::iota(channel_order_.begin(), channel_order_.end(), 0);
 
 	    if(!test_mode_)
 		shuffle_channel_order_();

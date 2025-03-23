@@ -20,6 +20,7 @@ const MESSAGE_TYPE_GET_STATUS_BATCH = 13;
 const MESSAGE_TYPE_GET_VOLUME = 14;
 const MESSAGE_TYPE_SETTINGS_BATCH = 15;
 const MESSAGE_TYPE_GET_SETTINGS_BATCH = 16;
+const MESSAGE_TYPE_SINGLE_CHANNEL = 17;
 
 
 /** Function that does nothing, for use as a default UI function. */
@@ -138,6 +139,7 @@ class BleManager {
 	this.s_pauzecycleperiod = 0;
 	this.s_pauzedcycles = 0;
 	this.s_jitter = 0;
+	this.s_single_channel = 0;
 	this.s_testmode = false;
     }
 
@@ -220,7 +222,10 @@ class BleManager {
 	let view_j = new DataView(messagePayload.buffer, 21, 4);
 	this.s_jitter = view_j.getUint32(0, /*littleEndian=*/true);
 
-	let view_tm = new  DataView(messagePayload.buffer, 25, 1);
+	let view_sc = new DataView(messagePayload.buffer, 25, 4);
+	this.s_single_channel = view_sc.getUint32(0, /*littleEndian=*/true);
+	
+	let view_tm = new  DataView(messagePayload.buffer, 29, 1);
 	let val_tm = view_tm.getUint8(0);
 	this.s_testmode = val_tm == 1;
 
@@ -233,6 +238,7 @@ class BleManager {
 		 + ", pauzecycleperiod: " + this.s_pauzecycleperiod
 		 + ", pauzedcycles: " + this.s_pauzedcycles
 		 + ", jitter: " + this.s_jitter
+		 + ", single_channel: " + this.s_single_channel
 		 + ", testmode: " + this.s_testmode);
 
 

@@ -300,7 +300,10 @@ function updateFromSettingsBatch() {
     document.getElementById('s_pauzecycleperiod').value = bleInstance.s_pauzecycleperiod;
     document.getElementById('s_pauzedcycles').value = bleInstance.s_pauzedcycles;
     document.getElementById('s_jitter').value = bleInstance.s_jitter;
+    document.getElementById('s_single_channel').value = bleInstance.s_single_channel;
     document.getElementById('s_test_mode').checked = bleInstance.s_testmode;
+
+    document.getElementById('s_single_channel').disabled = !bleInstance.s_testmode;
 }
 
 /**
@@ -325,6 +328,10 @@ function user_updatevolume(num) {
 //     bleInstance.setVolume(num);
 // }
 
+
+document.getElementById('s_test_mode').addEventListener('change', function() {
+    document.getElementById('s_single_channel').disabled = !this.checked;
+  });
 
 
 document.addEventListener("DOMContentLoaded", function() {

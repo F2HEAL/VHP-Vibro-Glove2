@@ -75,12 +75,8 @@
 		  <label for="s_chan8">Channel 8</label>
 		  <input id="s_chan8" type="checkbox" class="form-control" onchange="bleInstance.setMessageBool(MESSAGE_TYPE_8_CHANNEL, this.checked)" disabled>
 		</div>
-		<div class="col">
-		  <label for="s_test_mode">Test Mode</label>
-		  <input id="s_test_mode" type="checkbox" class="form-control" onchange="bleInstance.setMessageBool(MESSAGE_TYPE_TEST_MODE, this.checked)" disabled>
-		</div>
 	      </div>
-	      
+
 	      <div class="form-row mb-2">
 		<div class="col">
 		  <label for="s_stimfreq">Stimulation Frequency (20-400Hz)</label>
@@ -91,7 +87,7 @@
 		  <input id="s_stimdur" type="number" class="form-control" min="20" max="2000" value="20" onchange="validateAndSetUInt32(MESSAGE_TYPE_STIM_DURATION, this, 20, 2000)" disabled>
 		</div>
 	      </div>
-	      
+
 	      <div class="form-row mb-2">
 		<div class="col">
 		  <label for="s_cycleperiod">Cycle Period (20-20000ms)</label>
@@ -111,6 +107,17 @@
 		<div class="col">
 		  <label for="s_jitter">Jitter (0-1000 ‰)</label>
 		  <input id="s_jitter" type="number" class="form-control" min="0" max="1000" value="0" onchange="validateAndSetUInt32(MESSAGE_TYPE_JITTER, this, 0, 1000)" disabled>
+		</div>
+	      </div>
+
+	      <div class="form-row mb-2">
+		<div class="col">
+		  <label for="s_test_mode">Test Mode</label>
+		  <input id="s_test_mode" type="checkbox" class="form-control" onchange="bleInstance.setMessageBool(MESSAGE_TYPE_TEST_MODE, this.checked)" disabled>
+		</div>
+		<div class="col">
+		  <label for="s_single_channel">Single Channel (0-8)</label>
+		  <input id="s_single_channel" type="number" class="form-control" min="0" max="8" value="0" onchange="validateAndSetUInt32(MESSAGE_TYPE_SINGLE_CHANNEL, this, 0, 8)" disabled>
 		</div>
 	      </div>
 	    </div>

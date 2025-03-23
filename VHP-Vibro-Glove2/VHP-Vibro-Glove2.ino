@@ -169,7 +169,8 @@ void ToggleStream() {
 			       g_settings.pauzedcycles,
 			       g_settings.jitter,
 			       g_volume * g_settings.vol_amplitude / 100,
-			       g_settings.test_mode);
+			       g_settings.test_mode,
+			       g_settings.single_channel);
 	g_running = true;
 	g_running_since = millis(); 
     }
@@ -245,6 +246,11 @@ void HandleMessage(const Message& message) {
 	Serial.print("Message Jitter:");
 	Serial.println(g_settings.jitter);
 	break;
+    case MessageType::kSingleChannel:
+	message.Read(&g_settings.single_channel);
+	Serial.print("Message Single Channel:");
+	Serial.println(g_settings.single_channel);
+	break;	
     case MessageType::kTestMode:
 	message.Read(&g_settings.test_mode);
 	Serial.print("Message TestMode:");

@@ -56,6 +56,7 @@ namespace audio_tactile {
 	kGetVolume = 14,
 	kSettingsBatch = 15, 
 	kGetSettingsBatch = 16,
+	kSingleChannel = 17
     };
 
 // Recipients of messages -- Not used, can be removed
@@ -155,8 +156,10 @@ namespace audio_tactile {
 	    ::LittleEndianWriteU32(settings.pauzecycleperiod, dest); dest += 4;
 	    ::LittleEndianWriteU32(settings.pauzedcycles, dest); dest += 4;
 	    ::LittleEndianWriteU32(settings.jitter, dest); dest += 4;
+	    ::LittleEndianWriteU32(settings.single_channel, dest); dest += 4;	    
 	    *dest = settings.test_mode ? 1 : 0; dest++;
-    
+
+	    
 	    bytes_[3] = dest - (bytes_ + kHeaderSize);
 	    set_type(MessageType::kSettingsBatch);
 	}
