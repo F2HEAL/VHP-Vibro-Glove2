@@ -10,7 +10,7 @@ The software can be controlled with a browser supporting Bluetooth Web API (see 
 
 After starting the device will activate its Bluetooth connection, and start accepting connections. Note that the Bluetooth interface will deactivate after 5mins of inactivity.
 
-Open *f2heal_webui_v2.html*  found in [WebUI folder](../webui) in a browser to use this feature. 
+Open *f2heal_webui_v2.html*  found in [WebUI folder](../webui) in a browser to use this feature. An online version of the client can be found [here](https://test.heal2.day/webui/f2heal_webui_v2.html)
 
 Use the **connect** button to connect to a device.
 
