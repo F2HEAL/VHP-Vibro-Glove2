@@ -317,7 +317,7 @@ function updateVolume(num) {
 
 function user_updatevolume(num) {
     logFunction("Update volume to: " + num);    
-    //document.getElementById("s_volume").value = num;
+    document.getElementById("s_volume").value = num;
     document.getElementById("s_volume_text").value = num;
     bleInstance.setVolume(num);
 }
