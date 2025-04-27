@@ -130,7 +130,7 @@ void processSerialCommand(String cmd) {
 
     switch (commandType) {
       case 'V':
-        g_volume = constrain(value, 0, 255);
+        g_volume = constrain(value, 0, 100);
         Serial.print("Volume set to ");
         Serial.println(g_volume);
         break;
