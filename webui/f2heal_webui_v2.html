@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="f2heal_webui_v2.css">
+    <title>F2Heal Web UI v2.1</title>
+    <style>
+        .hidden-section {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <header class="bg-primary text-white text-center py-3">
+            <h1>F2Heal Web UI v2.1</h1>
+        </header>
+
+        <section id="connectionPanel" class="mt-4">
+            <button id="clientConnectButton" class=" btn-primary" onclick="bleInstance.connectionToggle()">Connect</button>
+            <button id="refreshButton" class=" btn-secondary" onclick="bleInstance.requestStatusBatch()" disabled>Refresh</button>
+        </section>
+
+        <section id="statusPanel" class="mt-4">
+            <fieldset class="border p-3">
+                <legend>Status</legend>
+                <label for="a_running">Running: </label>
+                <input id="a_running" type="checkbox" disabled><br>
+
+                <label for="a_runningsince">Running Since: </label>
+                <input id="a_runningsince" type="text" value="-1" disabled><br>
+
+                <label for="a_battery">Battery Voltage: </label>
+                <input id="a_battery" type="text" value="-1" disabled><br>
+            </fieldset>
+        </section>
+
+        <section id="streamControlPanel" class="mt-4">
+            <fieldset class="border p-3">
+                <legend>Stream Control</legend>
+                <button id="toggleStream" class="btn-success" onclick="bleInstance.streamToggle()" disabled>Start Stream</button>
+            </fieldset>
+        </section>
+
+
+	<section id="volumeControlPanel" class="mt-4">
+	  <fieldset class="border p-3">
+            <legend>Volume Control</legend>
+            <div class="form-group d-flex align-items-center">
+              <label for="s_volume" class="mr-3 mb-0"></label>
+              <input id="s_volume" type="range" class="custom-range flex-shrink-1 mr-3" min="0" max="100" step="1" value="25" disabled onchange="user_updatevolume(this.value)">
+              <input id="s_volume_text" type="text" class="form-control text-center" style="width: 80px;" value="25" disabled onchange="user_updatevolume(this.value)">
+            </div>
+	  </fieldset>
+	</section>
+	
+        <section id="hiddenSections" class="mt-4">
+            <button class="btn-info" onclick="toggleSection('presets')">Presets</button>
+            <button class="btn-info" onclick="toggleSection('parameters')">Parameters</button>
+            <button class="btn-info" onclick="toggleSection('logging')">Log</button>
+
+            <div id="presets" class="hidden-section border p-3">
+                <h4>Presets</h4>
+                <select id="presetSelect" class="form-control" onchange="loadAndApplyPreset(this.value)">
+                    <!-- Options populated dynamically -->
+                </select>
+            </div>
+
+	    <div id="parameters" class="hidden-section border p-3">
+	      <h4>Parameters</h4>
+	      <div class="form-row mb-2">
+		<div class="col">
+		  <label for="s_chan8">1 = 8 Channels  | O = 4 x 2 mirrored</label>
+		  <input id="s_chan8" type="checkbox" class="form-control" onchange="bleInstance.setMessageBool(MESSAGE_TYPE_8_CHANNEL, this.checked)" disabled>
+		</div>
+	      </div>
+
+	      <div class="form-row mb-2">
+		<div class="col">
+		  <label for="s_stimfreq">Stimulation Frequency (20-400Hz)</label>
+		  <input id="s_stimfreq" type="number" class="form-control" min="20" max="400" value="20" onchange="validateAndSetUInt32(MESSAGE_TYPE_STIM_FREQ, this, 20, 400)" disabled>
+		</div>
+		<div class="col">
+		  <label for="s_stimdur">Stimulation Duration (1-65535ms)</label>
+		  <input id="s_stimdur" type="number" class="form-control" min="1" max="65535" value="1" onchange="validateAndSetUInt32(MESSAGE_TYPE_STIM_DURATION, this, 1, 65535)" disabled>
+		</div>
+	      </div>
+
+	      <div class="form-row mb-2">
+		<div class="col">
+		  <label for="s_cycleperiod">Total Cycle Period (1-65535ms)</label>
+		  <input id="s_cycleperiod" type="number" class="form-control" min="1" max="65535" value="1" onchange="validateAndSetUInt32(MESSAGE_TYPE_CYCLE_PERIOD, this, 1, 65535)" disabled>
+		</div>
+		<div class="col">
+		  <label for="s_pauzecycleperiod">Number of Cycles per Period (0-100)</label>
+		  <input id="s_pauzecycleperiod" type="number" class="form-control" min="0" max="100" value="0" onchange="validateAndSetUInt32(MESSAGE_TYPE_PAUZE_CYCLE_PERIOD, this, 0, 100)" disabled>
+		</div>
+	      </div>
+
+	      <div class="form-row mb-2">
+		<div class="col">
+		  <label for="s_pauzedcycles">Number of Pauzed Cycles per Period</label>
+		  <input id="s_pauzedcycles" type="number" class="form-control" min="0" value="0" onchange="validatePauzedCycles(this)" disabled>
+		</div>
+		<div class="col">
+		  <label for="s_jitter">Jitter (0-1000 ‰)</label>
+		  <input id="s_jitter" type="number" class="form-control" min="0" max="1000" value="0" onchange="validateAndSetUInt32(MESSAGE_TYPE_JITTER, this, 0, 1000)" disabled>
+		</div>
+	      </div>
+
+	      <div class="form-row mb-2">
+		<div class="col">
+		  <label for="s_test_mode">Test Mode | sequential , not random CH order</label>
+		  <input id="s_test_mode" type="checkbox" class="form-control" onchange="bleInstance.setMessageBool(MESSAGE_TYPE_TEST_MODE, this.checked)" disabled>
+		</div>
+		<div class="col">
+		  <label for="s_single_channel">Single Channel : 1-8 | All CH's : 0</label>
+		  <input id="s_single_channel" type="number" class="form-control" min="0" max="8" value="0" onchange="validateAndSetUInt32(MESSAGE_TYPE_SINGLE_CHANNEL, this, 0, 8)" disabled>
+		</div>
+	      </div>
+	    </div>
+
+
+	    
+            <div id="logging" class="hidden-section border p-3">
+                <h4>Log</h4>
+                <textarea id="logDisplay" rows="10" class="form-control" readonly></textarea>
+            </div>
+        </section>
+    </div>
+
+    <script src="f2heal_library.js"></script>
+    <script src="f2heal_webui.js"></script>
+</body>
+</html>
