@@ -84,14 +84,14 @@
 		</div>
 		<div class="col">
 		  <label for="s_stimdur">Stimulation Duration (1-65535ms)</label>
-		  <input id="s_stimdur" type="number" class="form-control" min="1" max="65535" value="1" onchange="validateAndSetUInt32(MESSAGE_TYPE_STIM_DURATION, this, 20, 2000)" disabled>
+		  <input id="s_stimdur" type="number" class="form-control" min="1" max="65535" value="1" onchange="validateAndSetUInt32(MESSAGE_TYPE_STIM_DURATION, this, 1, 65535)" disabled>
 		</div>
 	      </div>
 
 	      <div class="form-row mb-2">
 		<div class="col">
 		  <label for="s_cycleperiod">Cycle Period (1-65535ms)</label>
-		  <input id="s_cycleperiod" type="number" class="form-control" min="1" max="65535" value="1" onchange="validateAndSetUInt32(MESSAGE_TYPE_CYCLE_PERIOD, this, 20, 20000)" disabled>
+		  <input id="s_cycleperiod" type="number" class="form-control" min="1" max="65535" value="1" onchange="validateAndSetUInt32(MESSAGE_TYPE_CYCLE_PERIOD, this, 1, 65535)" disabled>
 		</div>
 		<div class="col">
 		  <label for="s_pauzecycleperiod">Pauze Cycle Period (0-100)</label>
