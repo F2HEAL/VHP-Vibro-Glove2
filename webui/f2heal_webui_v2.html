@@ -83,15 +83,15 @@
 		  <input id="s_stimfreq" type="number" class="form-control" min="20" max="400" value="20" onchange="validateAndSetUInt32(MESSAGE_TYPE_STIM_FREQ, this, 20, 400)" disabled>
 		</div>
 		<div class="col">
-		  <label for="s_stimdur">Stimulation Duration (20-2000ms)</label>
-		  <input id="s_stimdur" type="number" class="form-control" min="20" max="2000" value="20" onchange="validateAndSetUInt32(MESSAGE_TYPE_STIM_DURATION, this, 20, 2000)" disabled>
+		  <label for="s_stimdur">Stimulation Duration (1-65535ms)</label>
+		  <input id="s_stimdur" type="number" class="form-control" min="1" max="65535" value="1" onchange="validateAndSetUInt32(MESSAGE_TYPE_STIM_DURATION, this, 20, 2000)" disabled>
 		</div>
 	      </div>
 
 	      <div class="form-row mb-2">
 		<div class="col">
-		  <label for="s_cycleperiod">Cycle Period (20-20000ms)</label>
-		  <input id="s_cycleperiod" type="number" class="form-control" min="20" max="20000" value="20" onchange="validateAndSetUInt32(MESSAGE_TYPE_CYCLE_PERIOD, this, 20, 20000)" disabled>
+		  <label for="s_cycleperiod">Cycle Period (1-65535ms)</label>
+		  <input id="s_cycleperiod" type="number" class="form-control" min="1" max="65535" value="1" onchange="validateAndSetUInt32(MESSAGE_TYPE_CYCLE_PERIOD, this, 20, 20000)" disabled>
 		</div>
 		<div class="col">
 		  <label for="s_pauzecycleperiod">Pauze Cycle Period (0-100)</label>
