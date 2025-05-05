@@ -4,18 +4,53 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="f2heal_webui_v2.css">
-    <title>F2Heal Web UI</title>
+    <title>F2Heal Web UI v2.1</title>
     <style>
         .hidden-section {
             display: none;
             margin-top: 20px;
         }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .mapping {
+            margin-bottom: 30px;
+        }
+        .title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .cable {
+            font-weight: bold;
+        }
+        .color-blue { color: blue; }
+        .color-brown { color: #964B00; }
+        .color-orange { color: orange; }
+        .color-green { color: green; }
+
     </style>
 </head>
 <body>
     <div class="container-fluid">
         <header class="bg-primary text-white text-center py-3">
-            <h1>F2Heal Web UI</h1>
+            <h1>F2Heal Web UI v2.1</h1>
         </header>
 
         <section id="connectionPanel" class="mt-4">
@@ -47,7 +82,7 @@
 
 	<section id="volumeControlPanel" class="mt-4">
 	  <fieldset class="border p-3">
-            <legend>Volume Control</legend>
+            <legend>Amplitude Control (1-100)</legend>
             <div class="form-group d-flex align-items-center">
               <label for="s_volume" class="mr-3 mb-0"></label>
               <input id="s_volume" type="range" class="custom-range flex-shrink-1 mr-3" min="0" max="100" step="1" value="25" disabled onchange="user_updatevolume(this.value)">
@@ -60,6 +95,7 @@
             <button class="btn-info" onclick="toggleSection('presets')">Presets</button>
             <button class="btn-info" onclick="toggleSection('parameters')">Parameters</button>
             <button class="btn-info" onclick="toggleSection('logging')">Log</button>
+            <button class="btn-info" onclick="toggleSection('wiring')">Wiring</button>
 
             <div id="presets" class="hidden-section border p-3">
                 <h4>Presets</h4>
@@ -72,7 +108,7 @@
 	      <h4>Parameters</h4>
 	      <div class="form-row mb-2">
 		<div class="col">
-		  <label for="s_chan8">Channel 8</label>
+		  <label for="s_chan8">0 = 4*2 Mirrored mode | 1 = 8*1 Single CH mode</label>
 		  <input id="s_chan8" type="checkbox" class="form-control" onchange="bleInstance.setMessageBool(MESSAGE_TYPE_8_CHANNEL, this.checked)" disabled>
 		</div>
 	      </div>
@@ -83,25 +119,25 @@
 		  <input id="s_stimfreq" type="number" class="form-control" min="20" max="400" value="20" onchange="validateAndSetUInt32(MESSAGE_TYPE_STIM_FREQ, this, 20, 400)" disabled>
 		</div>
 		<div class="col">
-		  <label for="s_stimdur">Stimulation Duration (20-2000ms)</label>
-		  <input id="s_stimdur" type="number" class="form-control" min="20" max="2000" value="20" onchange="validateAndSetUInt32(MESSAGE_TYPE_STIM_DURATION, this, 20, 2000)" disabled>
+		  <label for="s_stimdur">Stimulation Duration (1-65535ms)</label>
+		  <input id="s_stimdur" type="number" class="form-control" min="1" max="65535" value="1" onchange="validateAndSetUInt32(MESSAGE_TYPE_STIM_DURATION, this, 1, 65535)" disabled>
 		</div>
 	      </div>
 
 	      <div class="form-row mb-2">
 		<div class="col">
-		  <label for="s_cycleperiod">Cycle Period (20-20000ms)</label>
-		  <input id="s_cycleperiod" type="number" class="form-control" min="20" max="20000" value="20" onchange="validateAndSetUInt32(MESSAGE_TYPE_CYCLE_PERIOD, this, 20, 20000)" disabled>
+		  <label for="s_cycleperiod">Total Cycle Period (1-65535ms)</label>
+		  <input id="s_cycleperiod" type="number" class="form-control" min="1" max="65535" value="1" onchange="validateAndSetUInt32(MESSAGE_TYPE_CYCLE_PERIOD, this, 1, 65535)" disabled>
 		</div>
 		<div class="col">
-		  <label for="s_pauzecycleperiod">Pauze Cycle Period (0-100)</label>
+		  <label for="s_pauzecycleperiod">Number of Cycles per Period (0-100)</label>
 		  <input id="s_pauzecycleperiod" type="number" class="form-control" min="0" max="100" value="0" onchange="validateAndSetUInt32(MESSAGE_TYPE_PAUZE_CYCLE_PERIOD, this, 0, 100)" disabled>
 		</div>
 	      </div>
 
 	      <div class="form-row mb-2">
 		<div class="col">
-		  <label for="s_pauzedcycles">Pauzed Cycles</label>
+		  <label for="s_pauzedcycles">Number of Pauzed Cycles per Period</label>
 		  <input id="s_pauzedcycles" type="number" class="form-control" min="0" value="0" onchange="validatePauzedCycles(this)" disabled>
 		</div>
 		<div class="col">
@@ -112,11 +148,14 @@
 
 	      <div class="form-row mb-2">
 		<div class="col">
-		  <label for="s_test_mode">Test Mode</label>
+		  <label for="s_test_mode">0 = Standard Mode</label>
+		  <label for="s_test_mode">1 = Test Mode | Sequential , no random CH order</label>
 		  <input id="s_test_mode" type="checkbox" class="form-control" onchange="bleInstance.setMessageBool(MESSAGE_TYPE_TEST_MODE, this.checked)" disabled>
 		</div>
 		<div class="col">
-		  <label for="s_single_channel">Single Channel (0-8)</label>
+		  <label for="s_single_channel">- Single CH (1-8) in 8*1 mode</label>
+		  <label for="s_single_channel">- 2 Mirrored  CH's (1-4) in 4*2M mode</label>
+		  <label for="s_single_channel">- All CH's (0)</label>
 		  <input id="s_single_channel" type="number" class="form-control" min="0" max="8" value="0" onchange="validateAndSetUInt32(MESSAGE_TYPE_SINGLE_CHANNEL, this, 0, 8)" disabled>
 		</div>
 	      </div>
@@ -128,6 +167,114 @@
                 <h4>Log</h4>
                 <textarea id="logDisplay" rows="10" class="form-control" readonly></textarea>
             </div>
+
+	    <div id="wiring" class="hidden-section border p-3">
+	      <h4>Wiring Tactors</h4>
+
+    <div class="mapping">
+        <div class="title">4×2 Mirrored CH's</div>
+        <table>
+            <tr>
+                <th>Cable</th>
+                <th>Color</th>
+                <th>Wire #</th>
+                <th></th>
+                <th>Wire #</th>
+                <th>Color</th>
+                <th>Cable</th>
+            </tr>
+            <tr>
+                <td class="cable">UTP1</td>
+                <td class="color-blue">blue</td>
+                <td>1</td>
+                <td>-</td>
+                <td>8</td>
+                <td class="color-green">green</td>
+                <td class="cable">UTP2</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-brown">brown</td>
+                <td>2</td>
+                <td>-</td>
+                <td>7</td>
+                <td class="color-orange">orange</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-orange">orange</td>
+                <td>3</td>
+                <td>-</td>
+                <td>6</td>
+                <td class="color-brown">brown</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-green">green</td>
+                <td>4</td>
+                <td>-</td>
+                <td>5</td>
+                <td class="color-blue">blue</td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="mapping">
+        <div class="title">8×1 CH's</div>
+        <table>
+            <tr>
+                <th>Cable</th>
+                <th>Color</th>
+                <th>Wire #</th>
+            </tr>
+            <tr>
+                <td class="cable">UTP1</td>
+                <td class="color-blue">blue</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-brown">brown</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-orange">orange</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-green">green</td>
+                <td>4</td>
+            </tr>
+            <tr>
+                <td class="cable">UTP2</td>
+                <td class="color-blue">blue</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-brown">brown</td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-orange">orange</td>
+                <td>7</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-green">green</td>
+                <td>8</td>
+            </tr>
+        </table>
+    </div>
+
+           </div>
+
         </section>
     </div>
 
