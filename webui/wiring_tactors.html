@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cable Mapping</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .mapping {
+            margin-bottom: 30px;
+        }
+        .title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .cable {
+            font-weight: bold;
+        }
+        .color-blue { color: blue; }
+        .color-brown { color: #964B00; }
+        .color-orange { color: orange; }
+        .color-green { color: green; }
+    </style>
+</head>
+<body>
+    <div class="mapping">
+        <div class="title">4*2 Mirrored CH's</div>
+        <table>
+            <tr>
+                <th>Cable</th>
+                <th>Color</th>
+                <th>Wire #</th>
+                <th></th>
+                <th>Wire #</th>
+                <th>Color</th>
+                <th>Cable</th>
+            </tr>
+            <tr>
+                <td class="cable">UTP1</td>
+                <td class="color-blue">blue</td>
+                <td>1</td>
+                <td>-</td>
+                <td>8</td>
+                <td class="color-green">green</td>
+                <td class="cable">UTP2</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-brown">brown</td>
+                <td>2</td>
+                <td>-</td>
+                <td>7</td>
+                <td class="color-orange">orange</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-orange">orange</td>
+                <td>3</td>
+                <td>-</td>
+                <td>6</td>
+                <td class="color-brown">brown</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-green">green</td>
+                <td>4</td>
+                <td>-</td>
+                <td>5</td>
+                <td class="color-blue">blue</td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="mapping">
+        <div class="title">8*1 CH's</div>
+        <table>
+            <tr>
+                <th>Cable</th>
+                <th>Color</th>
+                <th>Wire #</th>
+            </tr>
+            <tr>
+                <td class="cable">UTP1</td>
+                <td class="color-blue">blue</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-brown">brown</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-orange">orange</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-green">green</td>
+                <td>4</td>
+            </tr>
+            <tr>
+                <td class="cable">UTP2</td>
+                <td class="color-blue">blue</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-brown">brown</td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-orange">orange</td>
+                <td>7</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="color-green">green</td>
+                <td>8</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
