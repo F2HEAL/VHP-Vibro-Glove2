@@ -1,9 +1,21 @@
 /* General Layout and Typography */
-body {
+  body {
     font-family: Arial, sans-serif;
     margin: 20px;
   }
+
+  .container-fluid > header h1 {
+    font-size: 110%;
+  }
   
+  .container-fluid > header h2 {
+    font-size: 100%;
+  }
+  
+  .container-fluid > section h2 {
+    font-size: 90%;
+  }
+
   button {
     font-size: 110%;
   }

@@ -10,7 +10,7 @@
 <body>
     <div class="container-fluid">
         <header class="bg-primary text-white text-center py-3">
-            <h1>F2Heal Web UI v2_1 (needs FW 'SC_1_0_3 or higher')</h1>
+            <h1>F2Heal Web UI v2_1 (needs FW SERCOM_2_0_0_BETA or higher')</h1>
         </header>
 
         <section id="connectionPanel" class="mt-4">
@@ -25,8 +25,8 @@
                 <label for="a_firmware">Firmware Version: </label>
                 <input id="a_firmware" type="text" value="-" disabled><br>
 
-                <label for="a_default_params">Default Parameter Settings: </label>
-                <input id="a_default_params" type="text" value="-" disabled style="width: 300px;"><br>    
+                <label for="a_default_params">Default Parameter Settings @ power-up: </label>
+                <input id="a_default_params" type="text" value="-" disabled style="width: 330px;"><br>    
 
                 <label for="a_running">Running: </label>
                 <input id="a_running" type="checkbox" disabled><br>
@@ -82,33 +82,33 @@
 
 	      <div class="form-row mb-2">
 		<div class="col">
-		  <label for="s_stimfreq">Stimulation Frequency (20-400Hz)</label>
+		  <label for="s_stimfreq">Stimulation Frequency (20-400Hz) [F]</label>
 		  <input id="s_stimfreq" type="number" class="form-control" min="20" max="400" value="20" onchange="validateAndSetUInt32(MESSAGE_TYPE_STIM_FREQ, this, 20, 400)" disabled>
 		</div>
 		<div class="col">
-		  <label for="s_stimdur">Stimulation Duration (1-65535ms)</label>
+		  <label for="s_stimdur">Stimulation Duration (1-65535ms) [D]</label>
 		  <input id="s_stimdur" type="number" class="form-control" min="1" max="65535" value="1" onchange="validateAndSetUInt32(MESSAGE_TYPE_STIM_DURATION, this, 1, 65535)" disabled>
 		</div>
 	      </div>
 
 	      <div class="form-row mb-2">
 		<div class="col">
-		  <label for="s_cycleperiod">Total Cycle Period (1-65535ms)</label>
+		  <label for="s_cycleperiod">Total Cycle Period (1-65535ms) [Y]</label>
 		  <input id="s_cycleperiod" type="number" class="form-control" min="1" max="65535" value="1" onchange="validateAndSetUInt32(MESSAGE_TYPE_CYCLE_PERIOD, this, 1, 65535)" disabled>
 		</div>
 		<div class="col">
-		  <label for="s_pauzecycleperiod">Number of Cycles per Period (0-100)</label>
+		  <label for="s_pauzecycleperiod">Number of Cycles per Period (0-100) [P]</label>
 		  <input id="s_pauzecycleperiod" type="number" class="form-control" min="0" max="100" value="0" onchange="validateAndSetUInt32(MESSAGE_TYPE_PAUZE_CYCLE_PERIOD, this, 0, 100)" disabled>
 		</div>
 	      </div>
 
 	      <div class="form-row mb-2">
 		<div class="col">
-		  <label for="s_pauzedcycles">Number of Pauzed Cycles per Period</label>
+		  <label for="s_pauzedcycles">Number of Pauzed Cycles per Period [Q]</label>
 		  <input id="s_pauzedcycles" type="number" class="form-control" min="0" value="0" onchange="validatePauzedCycles(this)" disabled>
 		</div>
 		<div class="col">
-		  <label for="s_jitter">Jitter (0-1000 ‰)</label>
+		  <label for="s_jitter">Jitter (0-1000 ‰) [J]</label>
 		  <input id="s_jitter" type="number" class="form-control" min="0" max="1000" value="0" onchange="validateAndSetUInt32(MESSAGE_TYPE_JITTER, this, 0, 1000)" disabled>
 		</div>
 	      </div>
@@ -116,13 +116,13 @@
 	      <div class="form-row mb-2">
 		<div class="col">
 		  <label for="s_test_mode">0 = Standard Mode</label>
-		  <label for="s_test_mode">1 = Test Mode | Sequential , no random CH order</label>
+		  <label for="s_test_mode">1 = Test Mode | Sequential CH order [M]</label>
 		  <input id="s_test_mode" type="checkbox" class="form-control" onchange="bleInstance.setMessageBool(MESSAGE_TYPE_TEST_MODE, this.checked)" disabled>
 		</div>
 		<div class="col">
 		  <label for="s_single_channel">- Single CH (1-8) in 8*1 mode</label>
 		  <label for="s_single_channel">- 2 Mirrored  CH's (1-4) in 4*2M mode</label>
-		  <label for="s_single_channel">- All CH's (0)</label>
+		  <label for="s_single_channel">- All CH's (0) [C]</label>
 		  <input id="s_single_channel" type="number" class="form-control" min="0" max="8" value="0" onchange="validateAndSetUInt32(MESSAGE_TYPE_SINGLE_CHANNEL, this, 0, 8)" disabled>
 		</div>
 	      </div>
