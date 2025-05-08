@@ -1,0 +1,132 @@
+/* General Layout and Typography */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  
+  button {
+    font-size: 110%;
+  }
+  
+  fieldset {
+    padding: 0.01em 0 0 0;
+  }
+  
+  legend {
+    font-size: 120%;
+  }
+  
+  .hidden-section {
+    display: none;
+    margin-top: 20px;
+  }
+  
+  .mapping {
+    margin-bottom: 30px;
+  }
+  
+  .title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  /* Tables */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+  }
+  
+  /* Cable Color Classes */
+  .cable {
+    font-weight: bold;
+  }
+  
+  .color-blue { color: blue; }
+  .color-brown { color: #964B00; }
+  .color-orange { color: orange; }
+  .color-green { color: green; }
+  
+  /* Control & Layout Specific Styles */
+  .channelTest {
+    margin-left: 1em;
+  }
+  
+  #clientConnectButton {
+    font-size: 110%;
+    float: left;
+    margin-right: 1em;
+  }
+  
+  #connectionPanel {
+    padding: 1em;
+  }
+  
+  #deviceName {
+    font-family: monospace;
+    font-size: 125%;
+    float: left;
+  }
+  
+  .knobLabel {
+    margin-right: 0.8em;
+  }
+  
+  .knobTextValue {
+    width: 3.5em;
+    text-align: right;
+    font-family: monospace;
+  }
+  
+  #logDisplay {
+    color: #eee;
+    background-color: #222;
+    resize: none;
+  }
+  
+  #OtaBootloadMode {
+    float: left;
+    font-size: 110%;
+    margin-left: 2em;
+    background-color: #ea5;
+  }
+  
+  /* Panels */
+  .panel {
+    width: 26em;
+    border: 1px solid #bbb;
+    margin: 0 1ex 1ex 0;
+    padding: 1em;
+    border-radius: 3pt;
+    float: left;
+  }
+  
+  .panel button {
+    padding: 4pt;
+    margin-right: 0.3em;
+  }
+  
+  .panel legend {
+    font-size: 120%;
+  }
+  
+  .panel table {
+    margin-top: 1.5ex;
+  }
+  
+  .panel-clear {
+    clear: both;
+  }
+  
