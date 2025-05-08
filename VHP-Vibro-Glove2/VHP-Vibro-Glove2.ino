@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // 20250507 bepg
 
-const char* FIRMWARE_VERSION = "SC_1_0_3";  // Using const char* instead of String
+const char* FIRMWARE_VERSION = "SERCOM_2_0_0_BETA";  // Using const char* instead of String
 
 
 #include "src/PwmTactor.hpp"
@@ -148,6 +148,9 @@ void processSerialCommand(String cmd) {
       Serial.print(g_settings.jitter);
       Serial.print(" M");
       Serial.print(g_settings.test_mode);
+      Serial.print(" C");
+      Serial.print(g_settings.single_channel);
+
     }
     else {
       Serial.print("Unknown: ");
@@ -162,7 +165,7 @@ void processSerialCommand(String cmd) {
     switch (commandType) {
       case 'V':
         g_volume = constrain(value, 0, 100);
-        Serial.print("Volume set to ");
+        Serial.print("'g_volume' set to ");
         Serial.println(g_volume);
         break;
 
@@ -292,12 +295,6 @@ void SendStatus() {
     if(g_running) {
         running_period = millis() - g_running_since;
     }
-    
-// Debug log to check values before sending
-    Serial.print("FIRMWARE_VERSION: ");
-    Serial.println(FIRMWARE_VERSION);
-    Serial.print("default_parameter_settings: ");
-    Serial.println(default_parameter_settings);
 
     BleCom.tx_message().WriteStatus(g_running, running_period, battery_voltage_float, FIRMWARE_VERSION, default_parameter_settings);
     BleCom.SendTxMessage();
