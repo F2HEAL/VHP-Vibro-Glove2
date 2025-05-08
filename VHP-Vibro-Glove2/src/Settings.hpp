@@ -6,8 +6,8 @@
 #include <stdint.h>
 
 constexpr char name[] = "F2Heal VHP";
-constexpr const char* default_parameter_settings = "V25 F250 D100 Y1332 P5 Q2 J235 M0";
-
+constexpr const char* default_parameter_settings = "V25 F250 D100 Y1332 P5 Q2 J235 M0 C0";
+                                                    
 /**
  * Default settings.
  *
