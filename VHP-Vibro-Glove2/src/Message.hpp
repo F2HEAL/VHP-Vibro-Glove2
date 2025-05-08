@@ -56,7 +56,9 @@ namespace audio_tactile {
 	kGetVolume = 14,
 	kSettingsBatch = 15, 
 	kGetSettingsBatch = 16,
-	kSingleChannel = 17
+	kSingleChannel = 17,
+	kGetVersion = 18,
+    kVersion = 19
     };
 
 // Recipients of messages -- Not used, can be removed
@@ -164,23 +166,34 @@ namespace audio_tactile {
 	    set_type(MessageType::kSettingsBatch);
 	}
 
-	// Writes a kStatus message
 	void WriteStatus(const bool running,
-			 const uint64_t& running_since,
-			 const float battery_voltage) {
+					const uint64_t& running_since,
+					const float battery_voltage,
+					const char* FIRMWARE_VERSION,
+					const char* default_parameter_settings) {
 
-    
-	    uint8_t* dest = bytes_ + kHeaderSize;
-    
-	    *dest = running ? 1 : 0; dest++;
-	    ::LittleEndianWriteU64(running_since, dest); dest += 8;
-	    ::LittleEndianWriteF32(battery_voltage, dest); dest += 4;
+		uint8_t* dest = bytes_ + kHeaderSize;
 
-	    bytes_[3] = dest - (bytes_ + kHeaderSize);
-	    set_type(MessageType::kStatusBatch);
-	}
-  
-  
+		*dest = running ? 1 : 0; dest++;
+		::LittleEndianWriteU64(running_since, dest); dest += 8;
+		::LittleEndianWriteF32(battery_voltage, dest); dest += 4;
+
+		// Write firmware_version string (length-prefixed)
+		uint8_t fw_len = strlen(FIRMWARE_VERSION);
+		*dest = fw_len; dest++;
+		memcpy(dest, FIRMWARE_VERSION, fw_len);
+		dest += fw_len;
+	
+		// Write default_param_settings string (length-prefixed)
+		uint8_t param_len = strlen(default_parameter_settings);
+		*dest = param_len; dest++;
+		memcpy(dest, default_parameter_settings, param_len);
+		dest += param_len;
+
+		bytes_[3] = dest - (bytes_ + kHeaderSize);
+		set_type(MessageType::kStatusBatch);
+		}
+    
 	// Reads uint8 from a BLE message
 	bool Read(uint8_t* v) const {
 	    *v = *payload().data();
@@ -205,6 +218,46 @@ namespace audio_tactile {
 	bool Read(uint32_t* v) const {
 	    *v = ::LittleEndianReadU32(payload().data());
 	    return true;
+	}
+
+    // Writes a kVersion message with firmware version string
+	void WriteVersion(const String& version) {
+		uint8_t* dest = bytes_ + kHeaderSize;
+		
+		// First write the length of the version string (1 byte)
+		uint8_t length = static_cast<uint8_t>(version.length());
+		*dest = length;
+		dest++;
+		
+		// Then write the version string bytes
+		memcpy(dest, version.c_str(), length);
+		dest += length;
+		
+		bytes_[3] = static_cast<uint8_t>(dest - (bytes_ + kHeaderSize));  // Set payload size
+		set_type(MessageType::kVersion);
+	}
+
+	// Reads a version string from a kVersion message
+	String ReadVersion() const {
+		const uint8_t* src = payload().data();
+		
+		// First byte is length
+		uint8_t length = *src;
+		src++;
+		
+		// Create a temporary buffer for the string
+		char buffer[length + 1]; // +1 for null terminator
+		memcpy(buffer, src, length);
+		buffer[length] = '\0'; // Null-terminate
+		
+		// Create String from buffer
+		return String(buffer);
+	}
+
+	// Writes a kGetVersion message (empty payload, just the type)
+	void WriteGetVersion() {
+		bytes_[3] = 0;  // Zero payload size
+		set_type(MessageType::kGetVersion);
 	}
 
     private:
