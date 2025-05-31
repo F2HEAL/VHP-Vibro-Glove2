@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// 20250507 bepg
+// 20250531 bepg
 
-const char* FIRMWARE_VERSION = "SERCOM_2_0_0_BETA";  // Using const char* instead of String
+const char* FIRMWARE_VERSION = "SERCOM_2_0_1_BETA";  // Using const char* instead of String
 
 
 #include "src/PwmTactor.hpp"
@@ -275,7 +275,7 @@ void ToggleStream() {
                      g_settings.pauzecycleperiod,
                      g_settings.pauzedcycles,
                      g_settings.jitter,
-                     g_volume * g_settings.vol_amplitude / 100,
+                     g_volume * g_settings.vol_amplitude / 100 *800 /512,
                      g_settings.test_mode,
                      g_settings.single_channel);
         g_running = true;
