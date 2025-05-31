@@ -63,7 +63,7 @@ namespace audio_tactile {
       Bluefruit.configPrphBandwidth(BANDWIDTH_MAX);
       Bluefruit.begin();
       Bluefruit.setTxPower(-8);
-      Bluefruit.setName("F2Heal-BLE");
+      Bluefruit.setName("device_name");
       Bluefruit.Periph.setConnectCallback(OnBleConnect);
       Bluefruit.Periph.setDisconnectCallback(OnBleDisconnect);
 
