@@ -32,16 +32,16 @@ struct Settings {
      * These values are configurable using the Bluetooth Web UI.
      */
     bool chan8 = true;
-    uint32_t samplerate = 46875;
-    uint32_t stimfreq = 250;
-    uint32_t stimduration = 100;
-    uint32_t cycleperiod = 1332;
-    uint32_t pauzecycleperiod = 5;
-    uint32_t pauzedcycles = 2;;
-    uint16_t jitter = 235;
-    uint32_t vol_amplitude = 278;
-    bool test_mode = false;
-    uint16_t single_channel = 0;
+    uint32_t samplerate = 30000;
+    uint32_t stimfreq = 40;
+    uint32_t stimduration = 8000;
+    uint32_t cycleperiod = 64000;
+    uint32_t pauzecycleperiod = 1;
+    uint32_t pauzedcycles = 0;
+    uint16_t jitter = 0;
+    uint32_t vol_amplitude = 208;
+    bool test_mode = true;
+    uint16_t single_channel = 1;
   
 } g_settings;
 
