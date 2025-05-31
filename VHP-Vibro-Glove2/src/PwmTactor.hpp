@@ -100,7 +100,7 @@ namespace audio_tactile {
     class Pwm {
     public:
 	enum {
-	    kTopValue = 512,   // Individual PWM values can't be above this number.
+	    kTopValue = 800,   // Individual PWM values can't be above this number.
 	    kUpsamplingFactor = 0,
 	};
 
